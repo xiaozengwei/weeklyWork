@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="jsgs">
+    <output-path>$PROJECT_DIR$/out/artifacts/jsgs</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="jsgs" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="jsgs/web/Web" />
+    </root>
+  </artifact>
+</component>
