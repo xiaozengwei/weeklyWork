@@ -144,7 +144,7 @@ $(function() {
         statusCode   : {ok:200, error:300, timeout:301}, //[可选]
         ajaxTimeout  : 500000, //[可选]全局Ajax请求超时时间(毫秒)
         pageInfo     : {total:'total', pageCurrent:'pageCurrent', pageSize:'pageSize', orderField:'orderField', orderDirection:'orderDirection'}, //[可选]分页参数
-        alertMsg     : {displayPosition:'topcenter', displayMode:'slide', alertTimeout:3000}, //[可选]信息提示的显示位置，显隐方式，及[info/correct]方式时自动关闭延时(毫秒)
+        alertMsg     : {displayPosition:'topcenter', displayMode:'slide', alertTimeout:30000}, //[可选]信息提示的显示位置，显隐方式，及[info/correct]方式时自动关闭延时(毫秒)
         keys         : {statusCode:'statusCode', message:'message'}, //[可选]
         ui           : {
                          windowWidth      : 0,    //框架可视宽度，0=100%宽，> 600为则居中显示

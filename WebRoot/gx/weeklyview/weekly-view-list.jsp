@@ -137,17 +137,17 @@
 
                                                 <c:forEach items="${list.meetList}" var="meetList" varStatus="status">
 
-                                                    <tr>
+                                                    <tr >
                                                         <c:if test="${'0' eq status.index}">
-                                                        <td rowspan="${list.count}" align="center">${list.dateName}<br/>${meetList.dayOfWeek}</td>
+                                                        <td rowspan="${list.count}" align="center" style="font-size: 16px;">${list.dateName}<br/>${meetList.dayOfWeek}</td>
                                                         </c:if>
-                                                        <td align="center">${meetList.ext3}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.ext3}</td>
                                                             <%--<td align="center">${meetList.endTime}</td>--%>
-                                                        <td align="center">${meetList.title}</td>
-                                                        <td align="center">${meetList.meetingRoomName}</td>
-                                                        <td align="center">${meetList.callLeaderName}</td>
-                                                        <td align="center">${meetList.callUsersName}</td>
-                                                        <td align="center">${meetList.useOrgName}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.title}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.meetingRoomName}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.callLeaderName}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.callUsersName}</td>
+                                                        <td align="center" style="font-size: 14px;${meetList.ext2 eq "1" ?"":"background-color: #a1354c"}">${meetList.useOrgName}</td>
 
 
 

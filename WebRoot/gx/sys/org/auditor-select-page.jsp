@@ -1,11 +1,11 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ include file="/common/taglibs.jsp"%>
 <%
-	String path = request.getContextPath();
-	String basePath = request.getContextPath()+"/";
+    String path = request.getContextPath();
+    String basePath = request.getContextPath()+"/";
 %>
 <style>
-	.user-selected{background-color:#3399ff;}
+    .user-selected{background-color:#3399ff;}
 </style>
 <script type="text/javascript">
     function do_open_layout(event, treeId, treeNode) {
@@ -25,78 +25,78 @@
 
 </script>
 <div class="bjui-pageContent" style="" id="user-select-page" onselectstart="return false">
-	<div style="width:100%;height: 75%;">
-		<div style="float:left; width:400px;height:100%;display: none;">
-			<fieldset style="height:100%;">
-				<legend>组织机构</legend>
-				<div id="orgtree" style="height:94%;overflow: auto; ">
-					<ul id="layout-tree-org" class="ztree" data-toggle="ztree" data-expand-all="false" data-on-click="do_open_layout">
-						<c:forEach items="${orgList}" var="orgList" varStatus="status">
-							<li data-id="${orgList.rowId}" data-pid="${orgList.parentOrgId}" data-url="<%=basePath %>sysorg/get-users-part.do?orgId=${orgList.rowId}" data-divid="#layout-users" data-fresh="true" >${orgList.orgName}</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</fieldset>
-		</div>
-		<div style="float:left;margin-left:10px; height:100%; width:200px;">
-			<div style="height:100%; ">
-				<fieldset style="height:100%;">
-					<legend>待选人员</legend>
-					<div id="layout-users" style="height:94%; overflow: auto;">
-						<table data-width="100%" class="table table-bordered">
-							<tbody>
-							<c:forEach items="${userList}" var="user" varStatus="status">
-								<tr id="${user.userId}">
-									<td align="center" class="user-bring" data-user='{"id":"${user.userId}", "name":"${user.userName}","orgId":"${user.rowId}"}'>${user.userName}</td>
-								</tr>
-							</c:forEach>
-							</tbody>
-						</table>
-					</div>
-				</fieldset>
-			</div>
-		</div>
-		<div style="float:left;margin-left:5px; height:100%; width:100px;  margin-right: 5px;text-align: center;">
-			<div style="margin-top: 105px;">
-				<button type="button" class="btn-blue" style="width: 80px;text-align: center;" id="btn-user-add">添加</button>
-				<%--<button type="button" class="btn-blue" style="margin-top: 5px;width: 80px;text-align: center;" id="btn-user-select-all">全部添加</button>--%>
-			</div>
+    <div style="width:100%;height: 75%;">
+        <div style="float:left; width:400px;height:100%;display: none;">
+            <fieldset style="height:100%;">
+                <legend>组织机构</legend>
+                <div id="orgtree" style="height:94%;overflow: auto; ">
+                    <ul id="layout-tree-org" class="ztree" data-toggle="ztree" data-expand-all="false" data-on-click="do_open_layout">
+                        <c:forEach items="${orgList}" var="orgList" varStatus="status">
+                            <li data-id="${orgList.rowId}" data-pid="${orgList.parentOrgId}" data-url="<%=basePath %>sysorg/get-users-part.do?orgId=${orgList.rowId}" data-divid="#layout-users" data-fresh="true" >${orgList.orgName}</li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
+        <div style="float:left;margin-left:10px; height:100%; width:200px;">
+            <div style="height:100%; ">
+                <fieldset style="height:100%;">
+                    <legend>待选人员</legend>
+                    <div id="layout-users" style="height:94%; overflow: auto;">
+                        <table data-width="100%" class="table table-bordered">
+                            <tbody>
+                            <c:forEach items="${userList}" var="user" varStatus="status">
+                                <tr id="${user.userId}">
+                                    <td align="center" class="user-bring" data-user='{"id":"${user.userId}", "name":"${user.userName}","orgId":"${user.rowId}"}'>${user.userName}</td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div style="float:left;margin-left:5px; height:100%; width:100px;  margin-right: 5px;text-align: center;">
+            <div style="margin-top: 105px;">
+                <button type="button" class="btn-blue" style="width: 80px;text-align: center;" id="btn-user-add">添加</button>
+                <%--<button type="button" class="btn-blue" style="margin-top: 5px;width: 80px;text-align: center;" id="btn-user-select-all">全部添加</button>--%>
+            </div>
 
-			<div style="margin-top: 50px;">
-				<button type="button" class="btn-blue" style="width: 80px;text-align: center;" id="btn-user-remove">删除</button>
-				<%--<button type="button" class="btn-blue" style="margin-top: 5px;width: 80px;text-align: center;" id="btn-user-remove-all">全部删除</button>--%>
-			</div>
-		</div>
-		<div style="float:left;margin-left:10px; height:100%; width:200px;">
-			<div style="height:100%;">
-				<fieldset style="height:100%;">
-					<legend>已选人员</legend>
-					<div id="layout-users-selected" style="height:94%; overflow: auto;">
-						<table data-width="100%" class="table table-bordered">
+            <div style="margin-top: 50px;">
+                <button type="button" class="btn-blue" style="width: 80px;text-align: center;" id="btn-user-remove">删除</button>
+                <%--<button type="button" class="btn-blue" style="margin-top: 5px;width: 80px;text-align: center;" id="btn-user-remove-all">全部删除</button>--%>
+            </div>
+        </div>
+        <div style="float:left;margin-left:10px; height:100%; width:200px;">
+            <div style="height:100%;">
+                <fieldset style="height:100%;">
+                    <legend>已选人员</legend>
+                    <div id="layout-users-selected" style="height:94%; overflow: auto;">
+                        <table data-width="100%" class="table table-bordered">
 
-						</table>
-					</div>
-				</fieldset>
-			</div>
-		</div>
-	</div>
-	<div style="clear:both"></div>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
 
-	<div style="width:100%;margin-top:30px;border-top:1px solid #c7bbd8;margin-left:-10px;"></div>
-	<div style="text-align:center; width:100%; line-height:50px;">
-		<button class="btn-blue" id="btn-user-select" type="button" style="margin-right:8px" data-url="" data-opt="${opt }" data-icon="check">确定</button>
+    <div style="width:100%;margin-top:30px;border-top:1px solid #c7bbd8;margin-left:-10px;"></div>
+    <div style="text-align:center; width:100%; line-height:50px;">
+        <button class="btn-blue" id="btn-user-select" type="button" style="margin-right:8px" data-url="" data-opt="${opt }" data-icon="check">确定</button>
 
-		<button class="btn-close" data-icon="close">关闭</button>
+        <button class="btn-close" data-icon="close">关闭</button>
 
-	</div>
-	<%--<div id="div-search" style="width:100%;height:30px;text-align: center;margin-top: 5px;">--%>
-		<%--<form id="pagerForm" data-toggle="ajaxsearch" action="<%=path%>/publish/user-search.do?opt=bringback&group=addtask"  data-target="#layout-users" loadingmask="false" data-fresh="true">--%>
-			<%--<div class="bjui-searchBar">--%>
-				<%--<input type="text" value="${name }" id="assignName" name="name" size="19" />&nbsp;--%>
-				<%--<button type="submit" class="btn-default" data-icon="search">查询</button>&nbsp;--%>
-			<%--</div>--%>
-		<%--</form>--%>
-	<%--</div>--%>
+    </div>
+    <%--<div id="div-search" style="width:100%;height:30px;text-align: center;margin-top: 5px;">--%>
+    <%--<form id="pagerForm" data-toggle="ajaxsearch" action="<%=path%>/publish/user-search.do?opt=bringback&group=addtask"  data-target="#layout-users" loadingmask="false" data-fresh="true">--%>
+    <%--<div class="bjui-searchBar">--%>
+    <%--<input type="text" value="${name }" id="assignName" name="name" size="19" />&nbsp;--%>
+    <%--<button type="submit" class="btn-default" data-icon="search">查询</button>&nbsp;--%>
+    <%--</div>--%>
+    <%--</form>--%>
+    <%--</div>--%>
 </div>
 
 <script>
@@ -195,14 +195,11 @@
             if(select_opt =='bringback'){//bringback(普通的选择带回)
 
                 $.CurrentNavtab.find(':input').each(function() {
-                    var $input = $(this), inputName = "${id}",callUsersId = "meetingArrangement[${group}].callLeaderId";
+                    var $input = $(this), inputName = "${id}",callUsersId = "meetingArrangement[${group}].auditorId";
                     var name = $input.attr("name");
-                    if (name=="meetingArrangement[${group}].callLeaderName") {
-						if($input.val()!=null&&!$input.val()==''){
-                            $input.val($input.val()+','+v_user_names);
-                        }else {
-                            $input.val(v_user_names);
-                        }
+                    if (name=="meetingArrangement[${group}].auditorName") {
+
+                        $input.val(v_user_names);
                     }
                     if (name=="meetingArrangement[${group}].callLeaderId") {
                         $input.val(v_user_ids);

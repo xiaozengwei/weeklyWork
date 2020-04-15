@@ -10,10 +10,10 @@
         <input type="hidden" name="pageSize" value="${page.pageSize}">
         <input type="hidden" name="pageCurrent" value="${page.pageCurrent}">
         <input type="hidden" name="orgId" value="${orgId}">
-        <input type="hidden" name="orgName" value="${orgName}">
+        <input type="hidden" name="orgName" value="${orgShowName}">
         <input type="hidden" name="index" value="${index}">
         <div class="bjui-searchBar">
-            <label>名称：</label><input type="text" value="${param.filter_LIKES_orgName}" name="filter_LIKES_orgName" size="10" />&nbsp;
+            <label>名称：</label><input type="text" value="${param.filter_LIKES_orgShowName}" name="filter_LIKES_orgShowName" size="10" />&nbsp;
             <button type="submit" class="btn-default" data-icon="search">查询</button>&nbsp;
             <%--<a class="btn btn-orange" href="javascript:;" data-toggle="reloadsearch" data-clear-query="true" data-icon="undo">清空查询</a>&nbsp;--%>
             <div class="pull-right">
@@ -27,7 +27,7 @@
         <thead>
         <tr>
             <th data-order-field="order">序号</th>
-            <th data-order-field="orgName">部门名称</th>
+            <th data-order-field="orgShowName">部门名称</th>
             <th width="28">选择</th>
 
         </tr>
@@ -37,8 +37,8 @@
         <c:forEach items="${page.result}" var="org" varStatus="status">
             <tr>
                 <td><%=count++ %></td>
-                <td>${org.orgName }</td>
-                <td ><input type="checkbox" name="ids" data-toggle="icheck" value="{${org.rowId}: ${org.orgName}}"></td>
+                <td>${org.orgShowName }</td>
+                <td ><input type="checkbox" name="ids" data-toggle="icheck" value="{${org.rowId}: ${org.orgShowName}}"></td>
 
             </tr>
 
@@ -113,8 +113,11 @@
                 var $input = $(this), inputName = 'meetingArrangement[${index}].useOrgName',inputOrgid = 'meetingArrangement[${index}].useOrgId';
                 var name = $input.attr("name");
                 if (name == (inputName)) {
-                    $input.val(v_org_names);
-
+                    if($input.val()!=null&&!$input.val()==''){
+                        $input.val($input.val()+','+v_org_names);
+                    }else {
+                        $input.val(v_org_names);
+                    }
                 }
                 if (name == (inputOrgid)) {
                     $input.val(v_org_ids);

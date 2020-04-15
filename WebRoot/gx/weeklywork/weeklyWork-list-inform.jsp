@@ -8,7 +8,7 @@
 %>
 <div class="navtabPage unitBox" style="display: block;">
     <div class="bjui-pageHeader">
-        <form id="pagerForm" data-toggle="ajaxsearch" action="<%=basePath%>weeklyView/list-old.do" method="post">
+        <form id="pagerForm" data-toggle="ajaxsearch" action="<%=basePath%>weeklyView/list-inform.do" method="post">
             <tr>
                 <td  class="jxlable" align="right">
                     <select name="year" data-toggle="selectpicker">
@@ -27,86 +27,89 @@
                 </td>
 
             </tr>
-            <div class="pull-right">
-                <button type="button" class="btn-red" data-url="<%=basePath%>weeklyView/meet-import.do"  data-toggle="dialog" data-target="meet-input"
-                        data-id="meet-input-dialog"  data-icon="plus" data-width="700" data-height="300">导入</button>&nbsp;
 
-            </div>
         </form>
     </div>
 
     <div class="bjui-pageContent tableContent" style="top: 63px; bottom: 28px;">
-        <form action="<%=basePath%>weeklyWork/test-save.do" id="j_custom_form" class="pageForm nice-validator n-red" data-toggle="validate" method="post" novalidate="novalidate">
+        <form action="<%=basePath%>weeklyWork/inform-save.do" id="j_custom_form" class="pageForm nice-validator n-red" data-toggle="validate" method="post" novalidate="novalidate">
             <table id="tabledit1" class="table workborder table-hover table-striped table-top bjui-tabledit" data-toggle="tabledit" data-initnum="" data-action="ajaxDone3.html" data-single-noindex="true">
                 <thead>
 
 
                 <tr style="display:none;">
                     <th title="主键" style="width: 0%;border-bottom:1px #000 solid;" align="center">
-                        <input type="text" readonly name="meetingArrangement[#index#].rowId"  id="meetingArrangement[#index#].rowId"    data-pattern="yyyy-MM-dd HH:mm:ss" value="0"
+                        <input type="text" readonly name="meetingArrangement1[#index#].rowId"  id="meetingArrangement1[#index#].rowId"    data-pattern="yyyy-MM-dd HH:mm:ss" value="0"
                                aria-required="true">
 
                     </th>
-                    <th title="开始" style="width: 6%;border-bottom:1px #000 solid;" align="center">
-                        <input type="text" name="meetingArrangement[#index#].startTime"  id="meetingArrangement[#index#].startTime"    data-pattern="yyyy-MM-dd HH:mm:00"
+                    <th title="开始" style="width: 8%;border-bottom:1px #000 solid;" align="center">
+                        <input type="text" name="meetingArrangement[#index#].startTime"  id="meetingArrangement1[#index#].startTime"    data-pattern="yyyy-MM-dd HH:mm:00"
                                data-mm-step=10
                                data-toggle="datepicker" align="center"  aria-required="true" >
                     </th>
-                    <th title="结束" style="width: 6%;border-bottom:1px #000 solid;" align="center">
-                        <input type="text"  name="meetingArrangement[#index#].endTime"  id="meetingArrangement[#index#].endTime"    data-pattern="yyyy-MM-dd HH:mm:00"
+                    <th title="结束" style="width: 8%;border-bottom:1px #000 solid;" align="center">
+                        <input type="text"  name="meetingArrangement[#index#].endTime"  id="meetingArrangement1[#index#].endTime"    data-pattern="yyyy-MM-dd HH:mm:00"
                                data-mm-step=10
                                data-toggle="datepicker" align="center"  aria-required="true" >
                     </th>
                     <th title="标题" style="width: 12%;border-bottom:1px #000 solid;" align="center">
-                        <input type="text" name="meetingArrangement[#index#].title" id="meetingArrangement[#index#].title"
+                        <input type="text" name="meetingArrangement[#index#].title" id="meetingArrangement1[#index#].title"
                                value="" style="width:90%;font-size: 15px" />
                     </th>
 
-                    <th title="地点" style="width: 15%;border-bottom:1px #000 solid;" align="center">
+                    <th title="地点" style="width: 8%;border-bottom:1px #000 solid;" align="center">
                         <input type="text" style="font-size: 15px" name="meetingArrangement[#index#].meetingRoomName" ondblclick="findaddress(this)"
-                               id="meetingArrangement[#index#].meetingRoomName"  />
+                               id="meetingArrangement1[#index#].meetingRoomName"  />
                     </th>
-                    <th title="召集领导" style="width: 15%;border-bottom:1px #000 solid;" align="center">
+                    <th title="召集领导" style="width: 8%;border-bottom:1px #000 solid;" align="center">
 
                         <input type="text" name="meetingArrangement[#index#].callLeaderName"  ondblclick="findCallLeader(this)"
-                               id="meetingArrangement[#index#].callLeaderName"  value="" style="width:90%;font-size: 15px"
+                               id="meetingArrangement1[#index#].callLeaderName"  value="" style="width:90%;font-size: 15px"
 
                         />
                         <input type="hidden" name="meetingArrangement[#index#].callLeaderId"
-                               id="meetingArrangement[#index#].callLeaderId"  value="" style="width:90%;font-size: 15px;display: none"
+                               id="meetingArrangement1[#index#].callLeaderId"  value="" style="width:90%;font-size: 15px;display: none"
                         />
                     </th>
-                    <th title="出席人员" style="width: 15%;border-bottom:1px #000 solid;" align="center">
+                    <th title="出席人员" style="width: 10%;border-bottom:1px #000 solid;" disabled="true" align="center">
 
                         <input type="text" name="meetingArrangement[#index#].callUsersName"
-                               id="meetingArrangement[#index#].callUsersName" ondblclick="findCallperson(this)" value="" style="width:90%;font-size: 15px"
+                               id="meetingArrangement1[#index#].callUsersName" value="" style="width:90%;font-size: 15px" disabled="true"
 
                         />
                         <input type="hidden" name="meetingArrangement[#index#].callUsersId"
-                               id="meetingArrangement[#index#].callUsersId"  value="" style="width:90%;font-size: 15px;display: none"
+                               id="meetingArrangement1[#index#].callUsersId"  value="" style="width:90%;font-size: 15px;display: none"
                         />
                     </th>
-                    <th title="承办部门" style="width: 15%;border-bottom:1px #000 solid;" align="center">
+                    <th title="承办部门" style="width: 10%;border-bottom:1px #000 solid;" align="center">
 
                         <input type="text" name="meetingArrangement[#index#].useOrgName"
-                               id="meetingArrangement[#index#].useOrgName" ondblclick="findCallDept(this)" value="" style="width:90%;font-size: 15px"
+                               id="meetingArrangement1[#index#].useOrgName" ondblclick="findCallDept(this)" value="" style="width:90%;font-size: 15px"
 
                         />
                         <input type="hidden" name="meetingArrangement[#index#].useOrgId"
-                               id="meetingArrangement[#index#].useOrgId"  value="" style="width:90%;font-size: 15px"
+                               id="meetingArrangement1[#index#].useOrgId"  value="" style="width:90%;font-size: 15px"
                         />
                     </th>
 
-                    <%--<th title="审核人" style="width: 15%;border-bottom:1px #000 solid;" align="center">--%>
+                    <th title="审核人" style="width: 10%;border-bottom:1px #000 solid;" align="center">
 
-                        <%--<input type="text" name="meetingArrangement[#index#].auditorName"  ondblclick="findAuditor(this)"--%>
-                               <%--id="meetingArrangement[#index#].auditorName"  value="" style="width:90%;font-size: 15px"--%>
+                        <input type="text" name="meetingArrangement[#index#].auditorName"  ondblclick="findAuditor(this)"
+                               id="meetingArrangement1[#index#].auditorName"  value="" style="width:90%;font-size: 15px"
 
-                        <%--/>--%>
-                        <%--<input type="hidden" name="meetingArrangement[#index#].auditorId"--%>
-                               <%--id="meetingArrangement[#index#].auditorId"  value="" style="width:90%;font-size: 15px;display: none"--%>
-                        <%--/>--%>
-                    <%--</th>--%>
+                        />
+                        <input type="hidden" name="meetingArrangement[#index#].auditorId"
+                               id="meetingArrangement1[#index#].auditorId"  value="" style="width:90%;font-size: 15px;display: none"
+                        />
+                    </th>
+
+                    <th title="附件(图片)" style="width: 10%;border-bottom:1px #000 solid;" align="center">
+                        <input type="text" name="meetingArrangement[#index#].remark"  ondblclick="findImg(this)"
+                               id="meetingArrangement1[#index#].remark"  value="" style="width:90%;font-size: 15px"
+
+                        />
+                    </th>
 
                     <th title="" width="100" style="width: 5%;border-bottom:1px #000 solid;" align="center" >
                         <a onclick="save(this)" class="btn btn-green " >保存</a>
@@ -123,11 +126,13 @@
                     <td title="" style="width: 6%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">开始</td>
                     <td title="" style="width: 6%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">结束</td>
                     <td title="" style="width: 12%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">标题</td>
-                    <td title="" style="width: 12%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">地点</td>
-                    <td title="" style="width: 15%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">召集领导</td>
-                    <td title="" style="width: 15%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">出席人员</td>
+                    <td title="" style="width: 8%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">地点</td>
+                    <td title="" style="width: 12%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">召集领导</td>
+                    <td title="" style="width: 15%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center" disabled="true">出席人员</td>
                     <td title="" style="width: 12%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">承办部门</td>
-                    <%--<td title="" style="width: 15%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">审核人</td>--%>
+                    <td title="" style="width: 8%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">审核人</td>
+                    <td title="" style="width: 8%;border-bottom:1px #000 solid;border-top:1px #000 solid;" align="center">上传(图片)</td>
+
                     <td colspan="2" align="right" style="border-top:1px #000 solid;">
                         <button type="button" class="btn btn-green" data-toggle="tableditadd" data-target="#tabledit1" data-num="1" data-icon="plus"> 添加行</button>
                     </td>
@@ -137,15 +142,16 @@
                 <tbody>
                 <c:forEach items="${list}" var="meet" varStatus="status">
                     <tr>
-                        <td >${meet.rowId}</td>
-                        <td width="13%"><fmt:formatDate value="${meet.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                        <td width="13%"><fmt:formatDate value="${meet.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                        <td>${meet.title}</td>
-                        <td>${meet.meetingRoomName}</td>
-                        <td>${meet.callLeaderName}</td>
-                        <td>${meet.callUsersName}</td>
-                        <td>${meet.useOrgName}</td>
-                        <%--<td>${meet.auditorName}</td>--%>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.rowId}</td>
+                        <td width="13%" style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}"><fmt:formatDate value="${meet.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td width="13%" style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}"><fmt:formatDate value="${meet.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.title}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.meetingRoomName}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.callLeaderName}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}" readonly="readonly">${meet.callUsersName}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.useOrgName}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.auditorName}</td>
+                        <td style=" ${meet.ext2 eq '2'?"background-color:  #ff6250":""}">${meet.remark}</td>
                         <td></td>
                         <td></td>
                     <tr/>
@@ -155,14 +161,18 @@
             </table>
         </form>
     </div>
-    <%--<div class="bjui-pageFooter">--%>
-        <%--<ul>--%>
-            <%--<li><button type="button" class="btn btn-close" data-icon="close"> 取消</button></li>--%>
+    <div class="bjui-pageFooter">
+        <ul>
+            <li><button type="button" class="btn btn-close" data-icon="close"> 取消</button></li>
             <%--<li><button type="button" onclick="save()" class="btn btn-default" data-icon="save">全部保存</button></li>--%>
-        <%--</ul>--%>
-    <%--</div>--%>
-</div>
+        </ul>
+    </div></div>
 <script>
+    function findImg(r){
+        var index=r.parentNode.parentNode.rowIndex;
+        var index = index-2;
+        $(r).lookup({id:'findAuditor', url:'<%=basePath %>weeklyWork/img-select-upload.do?fileName='+r.value+'&docId=meetingArrangement['+index+'].remark&group='+index, title:'上传',width:650,height:300});
+    }
     function findAuditor (r)
     {
         var index=r.parentNode.parentNode.rowIndex;
@@ -207,10 +217,7 @@
                 endTime=$input.val();
             }
         });
-        console.log("startTime:"+startTime)
-        console.log("endTime:"+endTime)
-
-        $(r).lookup({id:'findaddress', url:'<%=basePath %>weeklyView/select-meetingroom.do?docId=meetingArrangement['+index+'].callLeaderName&group='+index+'&startTime='+startTime+'&endTime='+endTime, title:'地点',width:1000,height:800});
+        $(r).lookup({id:'findaddress', url:'<%=basePath %>weeklyView/select-meetingroom.do?startTime='+startTime+'&endTime='+endTime+'&docId=meetingArrangement['+index+'].callLeaderName&group='+index, title:'地点',width:1000,height:800});
 
     }
 
@@ -219,7 +226,7 @@
         var i=r.parentNode.parentNode.rowIndex;
         var row = i-2;
 
-        var rowIdIndex = document.getElementById('meetingArrangement['+row+'].rowId');
+        var rowIdIndex = document.getElementById('meetingArrangement1['+row+'].rowId');
         if(rowIdIndex!=null){
             var rowId = rowIdIndex.value;
             if(rowId!="0"){
@@ -243,21 +250,23 @@
     {
         var i=r.parentNode.parentNode.rowIndex;
         var row = i-2;
-        var rowId = document.getElementById('meetingArrangement['+row+'].rowId').value;
-        var startTime = document.getElementById('meetingArrangement['+row+'].startTime').value;
-        var endTime = document.getElementById('meetingArrangement['+row+'].endTime').value;
-        var title = document.getElementById('meetingArrangement['+row+'].title').value;
-        var callLeaderName = document.getElementById('meetingArrangement['+row+'].callLeaderName').value;
-        var callUsersName = document.getElementById('meetingArrangement['+row+'].callUsersName').value;
-        var useOrgName = document.getElementById('meetingArrangement['+row+'].useOrgName').value;
-        var meetingRoomName = document.getElementById('meetingArrangement['+row+'].meetingRoomName').value;
-        if(rowId==""||startTime==""||title==""||callLeaderName==""||callUsersName==""||useOrgName==""||meetingRoomName==""){
+        var rowId = document.getElementById('meetingArrangement1['+row+'].rowId').value;
+        var startTime = document.getElementById('meetingArrangement1['+row+'].startTime').value;
+        var endTime = document.getElementById('meetingArrangement1['+row+'].endTime').value;
+        var title = document.getElementById('meetingArrangement1['+row+'].title').value;
+        var callLeaderName = document.getElementById('meetingArrangement1['+row+'].callLeaderName').value;
+        var callUsersName = document.getElementById('meetingArrangement1['+row+'].callUsersName').value;
+        var useOrgName = document.getElementById('meetingArrangement1['+row+'].useOrgName').value;
+        var meetingRoomName = document.getElementById('meetingArrangement1['+row+'].meetingRoomName').value;
+        var auditorName = document.getElementById('meetingArrangement1['+row+'].auditorName').value;
+        var fileName = document.getElementById('meetingArrangement1['+row+'].remark').value;
+        if(rowId==""||startTime==""||title==""||callLeaderName==""||meetingRoomName==""||auditorName==""){
             $(this).alertmsg('error',"不能为空");
             return;
         }
         if(rowId!=null){
             $.ajax({
-                url:"<%=basePath%>weeklyWork/one-save.do",
+                url:"<%=basePath%>weeklyWork/inform-save.do",
                 type:"post",
                 dataType:"json",
                 data:{
@@ -268,36 +277,15 @@
                     'callLeaderName':callLeaderName,
                     'callUsersName':callUsersName,
                     'useOrgName':useOrgName,
-                    'meetingRoomName':meetingRoomName
+                    'meetingRoomName':meetingRoomName,
+                    'auditorName':auditorName,
+                    'fileName':fileName
                 },
                 success:function(data){
                     if(data.statusCode=="200"){
                         $(this).navtab('refresh');
                     }else if(data.statusCode=="300") {
-                        $(this).alertmsg('confirm',data.message,{displayMode:'slide', displayPosition:'middlecenter', okName:'添加', cancelName:'不添加', title:'冲突是否允许',
-                            okCall:function () {
-                                $.ajax({
-                                    url: "<%=basePath%>weeklyWork/one-save.do",
-                                    type: "post",
-                                    dataType: "json",
-                                    data: {
-                                        'rowId': rowId,
-                                        'startTime': startTime,
-                                        'endTime': endTime,
-                                        'title': title,
-                                        'callLeaderName': callLeaderName,
-                                        'callUsersName': callUsersName,
-                                        'useOrgName': useOrgName,
-                                        'meetingRoomName': meetingRoomName,
-                                        'pass': 'pass'
-                                    },
-                                    success:function() {
-                                        $(this).navtab('refresh');
-                                    }
-                                })
-                            },cancelCall:function () {
-                                document.getElementById('tabledit1').deleteRow(i);
-                            }})
+                        $(this).alertmsg('info',data.message);
                     }
                 }
             });

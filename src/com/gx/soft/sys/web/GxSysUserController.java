@@ -23,6 +23,7 @@ import com.gx.soft.mobile.persistence.manager.GxSysOrgCopyManager;
 import com.gx.soft.mobile.persistence.manager.VUserCopyManager;
 import com.gx.soft.sys.persistence.domain.*;
 import com.gx.soft.sys.persistence.manager.*;
+import com.gx.soft.weeklywork.persistence.manager.MeetingArrangementManager;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -62,6 +63,9 @@ public class GxSysUserController {
 	private SxpzRecordManager sxpzRecordManager;
 	@Autowired
 	private GxOaMobileRoleHasUserManager gxOaMobileRoleHasUserManager;
+	@Autowired
+	private MeetingArrangementManager meetingArrangementManager;
+
 	/**
 	 * 前往用户列表页面
 	 * 
@@ -85,6 +89,28 @@ public class GxSysUserController {
 		model.addAttribute("orgId", orgId);
 
 		return "sys/user/user-list";
+	}
+
+	/**
+	 * 前往用户列表页面
+	 *
+	 *  page
+	 *  parameterMap
+	 *  model
+	 * @return
+	 */
+	@RequestMapping("user-list-bind")
+	public String listBind(@ModelAttribute Page page,
+					   @RequestParam Map<String, Object> parameterMap, Model model) {
+		page.addOrder("modifyTime", "desc");
+		List<PropertyFilter> propertyFilters = PropertyFilter
+				.buildFromMap(parameterMap);
+		page = sysUserManager.pagedQuery(page, propertyFilters);
+		List<GxSysUser> userList = (List<GxSysUser>) page.getResult();
+
+		page.setResult(userList);
+		model.addAttribute("page", page);
+		return "sys/user/user-list-bind";
 	}
 
 	/**
@@ -162,6 +188,28 @@ public class GxSysUserController {
 	}
 
 	/**
+	 * 前往用户的添加/修改页面
+	 *
+	 * @param
+	 *  model
+	 * @return
+	 */
+	@RequestMapping("user-input2")
+	public String input2(
+			@RequestParam(value = "rowId", required = false) String rowId,
+			String orgId, Model model) {
+		GxSysUser gxSysUser = null;
+		if (rowId != null) {
+			gxSysUser = gxUserManager.get(rowId);
+		} else {
+			gxSysUser = new GxSysUser();
+		}
+		model.addAttribute("orgId", orgId);
+		model.addAttribute("model", gxSysUser);
+		return "sys/user/user-input2";
+	}
+
+	/**
 	 * 前往用户的添加/修改页面Copy
 	 *
 	 *
@@ -225,8 +273,12 @@ public class GxSysUserController {
 			String oldUserId = "";
 			if (id != null && id.length() > 0) {
 				dest = gxUserManager.get(id);
+//				if(dest==null){
+//					dest=gxUserManager.findUniqueBy("nickName",gxsysUser.getNickName());
+//				}
 				oldUserId = dest.getUserId();
-				if(!oldUserId.equals(gxsysUser.getUserId())){
+
+				if(oldUserId!=null&&!oldUserId.equals(gxsysUser.getUserId())){
 					if(gxUserManager.findUniqueBy("userId",gxsysUser.getUserId())!=null){
 						throw new Exception("登录名已存在");
 					}
@@ -244,27 +296,29 @@ public class GxSysUserController {
 			}
 			gxUserManager.save(dest);
 			if (opt.equals("save")) {// 保存操作：保存用户和组织机构关系
-				GxSysUserInOrg gxSysUserInOrg = new GxSysUserInOrg();
-				gxSysUserInOrg.setCreateTime(ts);
-				gxSysUserInOrg.setCreateUserId(gxuser != null ? gxuser
-						.getUserId() : "");
-				gxSysUserInOrg.setOrgId(orgId);
-				gxSysUserInOrg.setUserId(dest.getUserId());
-				gxSysUserInOrg.setDataOrder(dest.getDataOrder());
-
-				String hql = "SELECT max(t.dataOrder) FROM  GxSysUserInOrg t where t.orgId=?";
-				List maxNum = gxSysUserInOrgManger.find(hql, orgId);
 				int num = 1;
-				if (maxNum.size() < 1) {
-					num = 1;
-				} else {
-					Object obj = maxNum.get(0);
-					num = !StringUtils.validateLong(obj) ? 1 : new BigDecimal(
-							obj.toString()).intValue() + 1;
+				if(orgId!=null&&!orgId.equals("")){
+					GxSysUserInOrg gxSysUserInOrg = new GxSysUserInOrg();
+					gxSysUserInOrg.setCreateTime(ts);
+					gxSysUserInOrg.setCreateUserId(gxuser != null ? gxuser
+							.getUserId() : "");
+					gxSysUserInOrg.setOrgId(orgId);
+					gxSysUserInOrg.setUserId(dest.getUserId());
+					gxSysUserInOrg.setDataOrder(dest.getDataOrder());
+					String hql = "SELECT max(t.dataOrder) FROM  GxSysUserInOrg t where t.orgId=?";
+					List maxNum = gxSysUserInOrgManger.find(hql, orgId);
 
+					if (maxNum.size() < 1) {
+						num = 1;
+					} else {
+						Object obj = maxNum.get(0);
+						num = !StringUtils.validateLong(obj) ? 1 : new BigDecimal(
+								obj.toString()).intValue() + 1;
+
+					}
+					gxSysUserInOrg.setDataOrder(num);
+					gxSysUserInOrgManger.save(gxSysUserInOrg);
 				}
-				gxSysUserInOrg.setDataOrder(num);
-				gxSysUserInOrgManger.save(gxSysUserInOrg);
 				dest.setDataOrder(num);
 				gxUserManager.save(dest);
 			} else {// 更新操作
@@ -355,7 +409,55 @@ public class GxSysUserController {
 		return resMap;
 	}
 
+	/**
+	 * 用户的删除
+	 *
+	 *  delids
+	 * @return
+	 */
+	@RequestMapping("user-remove1")
+	public @ResponseBody
+	Map<String, Object> userRemove1(String delids) {
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		String statusCode = "200", message = "删除成功";
+		try {
+			if (delids != null && delids.length() > 0) {
+				Map<String, Object> parameterMap = new HashMap<String, Object>();
+				String[] ids = delids.split(",");
 
+				for (String rowId : ids) {
+
+					if (rowId != null) {
+						GxSysUser sysUser = gxUserManager.get(rowId);
+						if (sysUser != null) {
+							gxUserManager.remove(sysUser);
+						}
+						String userId = sysUser.getUserId();
+						// 删除组织机构-人员关联关系
+						parameterMap.put("filter_EQS_userId", userId);
+						List<PropertyFilter> propertyFilters = PropertyFilter
+								.buildFromMap(parameterMap);
+						List<GxSysUserInOrg> userInOrgList = gxSysUserInOrgManger
+								.find(propertyFilters);
+						for (GxSysUserInOrg o : userInOrgList) {
+							gxSysUserInOrgManger.remove(o);
+						}
+						parameterMap.clear();
+
+					}
+
+				}
+
+			}
+		} catch (Exception e) {
+			statusCode = "300";
+			message = "删除失败";
+		}
+		resMap.put("statusCode", statusCode);
+		resMap.put("message", message);
+		resMap.put("divid", "user-manager-user-list");
+		return resMap;
+	}
 
 
 
@@ -579,8 +681,12 @@ public class GxSysUserController {
 		page.setResult(userList);
 		page.setPageSize(15);
 		model.addAttribute("page", page);
-		model.addAttribute("userId", userId);
-		model.addAttribute("userName", userName);
+		if(userId!=null&&!userId.equals("")){
+			model.addAttribute("userId", userId);
+		}
+		if(userName!=null&&!userId.equals("")){
+			model.addAttribute("userName", userName);
+		}
 		return "sys/user/userlookup";
 	}
 
@@ -588,7 +694,7 @@ public class GxSysUserController {
 
 	/**
 	 * 文件的排序更新
-	 * 
+	 * k
 	 *  file
 	 *  fileTypeId
 	 *  session
@@ -641,6 +747,9 @@ public class GxSysUserController {
 					GxSysUserInOrg destUio = userRList.get(destCount);
 					int srcOrder = srcUio.getDataOrder();
 					int destOrder = destUio.getDataOrder();
+					if(srcOrder==destOrder){
+						destOrder=destOrder-1;
+					}
 					srcUio.setDataOrder(destOrder);
 					destUio.setDataOrder(srcOrder);
 					// 同步更新用户表中的排序字段
@@ -651,12 +760,16 @@ public class GxSysUserController {
 						gxUserManager.save(srcUser);
 					}
 					GxSysUser destUser = gxUserManager.findUniqueBy("userId",
-							destUio.getRowId());
+							destUio.getUserId());
 					if (destUser != null) {
 						destUser.setDataOrder(destUio.getDataOrder());
 						gxUserManager.save(destUser);
 					}
 
+					meetingArrangementManager.batchUpdate("update MeetingArrangement set period=? where callLeaderName=?",
+							destUio.getDataOrder(),destUser.getUserName());
+					meetingArrangementManager.batchUpdate("update MeetingArrangement set period=? where callLeaderName=?",
+							srcUio.getDataOrder(),srcUser.getUserName());
 					gxSysUserInOrgManger.save(destUio);
 					gxSysUserInOrgManger.save(srcUio);
 				}
@@ -747,6 +860,24 @@ public class GxSysUserController {
 							Object object=maxnum.get(0);
 							dataOrder=!StringUtils.validateLong(object)?1:new BigDecimal(object.toString()).intValue()+1;
 						}
+						uio.setOrgId("0"+orgId);
+						uio.setDataOrder(dataOrder);
+						uio.setCreateTime(ts);
+						gxSysUserInOrgManger.save(uio);
+					}else {
+						uio=new GxSysUserInOrg();
+						String hql="select max(t.dataOrder) from GxSysUserInOrg t where t.orgId=?";
+						List maxnum=gxSysUserInOrgManger.find(hql,"0"+orgId);
+						int dataOrder;
+						if(maxnum.size()<1){
+							dataOrder=1;
+						}else {
+							Object object=maxnum.get(0);
+							dataOrder=!StringUtils.validateLong(object)?1:new BigDecimal(object.toString()).intValue()+1;
+						}
+
+						uio.setUserId(sysUserManager.findUniqueBy("rowId",userId).getUserId());
+						uio.setRowId(null);
 						uio.setOrgId("0"+orgId);
 						uio.setDataOrder(dataOrder);
 						uio.setCreateTime(ts);

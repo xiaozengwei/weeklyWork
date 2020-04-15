@@ -11,30 +11,22 @@ import com.roya.mas.platform.schema.sms.SendSmsRequest;
 import com.roya.mas.platform.schema.sms.SendSmsResponse;
 
 
-public class SendSMS extends  Thread
-{
-	private String phone;
-	private String msg;
-	
-	
-	public SendSMS(String phone,String msg){
-		this.phone =phone;
-		this.msg = msg;
-	}
-    public void run()
-    {
-			  String requestIdentifier = "";
-			  TypeDesc returnMsg ;
-			  URL url;
+public class SendSMS{
 
-
-
-		  	  ResourceBundle bundle1 = ResourceBundle.getBundle("smsconfig");
+	public void SendSMS(String msg,String phone)
+	{
+		System.out.println("进入短信接口方法===============");
+		String requestIdentifier = "";
+		final TypeDesc returnMsg ;
+		URL url;
+		ResourceBundle bundle1 = ResourceBundle.getBundle("smsconfig");
 
 		try{
 			url = new URL(bundle1.getString("sms.server"));
 			Service service = new Service();
 			SiMockStub stub = new SiMockStub(url, service);
+			stub.setUsername("EOAUser");
+			stub.setPassword("8mj1na7ou3");
 			SendSmsRequest s = new SendSmsRequest();
 			s.setApplicationID(bundle1.getString("sms.appid"));
 			s.setDeliveryResultRequest(true);
@@ -54,15 +46,15 @@ public class SendSMS extends  Thread
 			System.out.println("there is sending sms:"+msg);
 			SendSmsResponse rep = stub.sendSms(s);
 			requestIdentifier = rep.getRequestIdentifier();
-			returnMsg = rep.getTypeDesc();
-			System.out.println("短信接口返回ID="+requestIdentifier);
-			System.out.println("短信接口返回信息="+returnMsg);
+//			returnMsg = rep.getTypeDesc();
+			System.out.println("接口调用成功 返回值="+requestIdentifier);
+//			System.out.println("接口调用成功 返回信息="+returnMsg);
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println("requestIdentifier="+requestIdentifier);
-			System.out.println("调用短信接口出现异常！");
+			System.out.println("短信接口执行失败、连接异常！");
 		}
-    }
+	}
 
 
 }

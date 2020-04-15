@@ -13,7 +13,7 @@ public class MeetingArrangement {
     private String rowId;
     private String title;
     private Timestamp applyDate;
-    private String period;
+    private Integer period;
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp startTime;
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
@@ -41,6 +41,8 @@ public class MeetingArrangement {
     private Date ext;
     private String ext2;
     private String ext3;
+    private String auditorName;
+    private String auditorId;
 
     @GenericGenerator(name = "generator", strategy = "uuid.hex")
     @Id
@@ -76,11 +78,11 @@ public class MeetingArrangement {
 
     @Basic
     @Column(name = "period")
-    public String getPeriod() {
+    public Integer getPeriod() {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(Integer period) {
         this.period = period;
     }
 
@@ -334,6 +336,26 @@ public class MeetingArrangement {
         this.ext3 = ext3;
     }
 
+    @Basic
+    @Column(name = "auditor_name")
+    public String getAuditorName() {
+        return auditorName;
+    }
+
+    public void setAuditorName(String auditorName) {
+        this.auditorName = auditorName;
+    }
+
+    @Basic
+    @Column(name = "auditor_id")
+    public String getAuditorId() {
+        return auditorId;
+    }
+
+    public void setAuditorId(String auditorId) {
+        this.auditorId = auditorId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -376,6 +398,8 @@ public class MeetingArrangement {
         if (ext != null ? !ext.equals(that.ext) : that.ext != null) return false;
         if (ext2 != null ? !ext2.equals(that.ext2) : that.ext2 != null) return false;
         if (ext3 != null ? !ext3.equals(that.ext3) : that.ext3 != null) return false;
+        if (auditorName != null ? !auditorName.equals(that.auditorName) : that.auditorName != null) return false;
+        if (auditorId != null ? !auditorId.equals(that.auditorId) : that.auditorId != null) return false;
 
         return true;
     }
@@ -411,6 +435,8 @@ public class MeetingArrangement {
         result = 31 * result + (ext != null ? ext.hashCode() : 0);
         result = 31 * result + (ext2 != null ? ext2.hashCode() : 0);
         result = 31 * result + (ext3 != null ? ext3.hashCode() : 0);
+        result = 31 * result + (auditorName != null ? auditorName.hashCode() : 0);
+        result = 31 * result + (auditorId != null ? auditorId.hashCode() : 0);
         return result;
     }
 }

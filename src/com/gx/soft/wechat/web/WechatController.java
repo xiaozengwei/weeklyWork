@@ -6,19 +6,27 @@ import com.gx.core.util.StringUtils;
 import com.gx.soft.common.util.DateUtil;
 import com.gx.soft.common.util.FileUtil;
 import com.gx.soft.common.util.HttpRequest;
+import com.gx.soft.common.util.SendMessage;
 import com.gx.soft.mobile.persistence.vo.JsonResult;
 import com.gx.soft.mobile.web.MobileLoginController;
+import com.gx.soft.sms.ws.SendSMS;
 import com.gx.soft.sys.persistence.domain.GxSysOrg;
+import com.gx.soft.sys.persistence.domain.GxSysRoleHasUser;
 import com.gx.soft.sys.persistence.domain.GxSysUser;
+import com.gx.soft.sys.persistence.domain.VUser;
+import com.gx.soft.sys.persistence.manager.GxRoleHasUserManager;
 import com.gx.soft.sys.persistence.manager.GxSysOrgManager;
 import com.gx.soft.sys.persistence.manager.SysUserManager;
+import com.gx.soft.sys.persistence.manager.VUserManager;
 import com.gx.soft.weeklywork.persistence.domain.DicMeetroom;
 import com.gx.soft.weeklywork.persistence.domain.FileRecord;
 import com.gx.soft.weeklywork.persistence.domain.MeetingArrangement;
 import com.gx.soft.weeklywork.persistence.domain.MeetroomUse;
 import com.gx.soft.weeklywork.persistence.manager.*;
 import com.gx.soft.weeklywork.web.WeeklyworkController;
+import com.sun.xml.internal.bind.XmlAccessorFactory;
 import org.apache.http.entity.StringEntity;
+import org.apache.poi.util.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +38,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
+import java.net.InetAddress;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -55,7 +65,10 @@ public class WechatController {
 
     @Autowired
     private WvoManager wvoManager;
-
+    @Autowired
+    private VUserManager vUserManager;
+    @Autowired
+    private SendMessage sendMessage;
     @Autowired
     private MeetroomUseManager meetroomUseManager;
     //    @Autowired
@@ -64,7 +77,8 @@ public class WechatController {
             .getLogger(WechatController.class);
     @Autowired
     private MeetingArrangementManager meetingArrangementManager;
-
+    @Autowired
+    private GxRoleHasUserManager gxRoleHasUserManager;
 
     private List<String> rowIdList = new ArrayList<>();
 
@@ -138,7 +152,8 @@ public class WechatController {
             if (!StringUtils.isEmpty(fileOriginalName)) {
                 FileUtil fileHelper = new FileUtil();
                 String decodeFileName = fileHelper.getDecodeFileName(fileOriginalName);// 文件名编码
-                String mFilePath = "C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\file" + decodeFileName;
+//                String mFilePath = "C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\file" + decodeFileName;
+                String mFilePath = "C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\file" + decodeFileName;
                 fileHelper.createFile(mFilePath, file.getBytes());
                 fileRecord.setFilePath(mFilePath);
                 fileRecord.setFileName("file" + decodeFileName);
@@ -258,13 +273,13 @@ public class WechatController {
     @RequestMapping("get-org")
     @ResponseBody
     public List<GxSysOrg> getOrg() {
-        return gxSysOrgManager.getAll();
+        return gxSysOrgManager.find("from GxSysOrg where isShow=1 order by dataOrder asc");
     }
 
     @RequestMapping("get-user")
     @ResponseBody
     public List<GxSysUser> getUser() {
-        return sysUserManager.find("from GxSysUser where dataOrder is not null order by dataOrder asc");
+        return sysUserManager.find("from GxSysUser where userLevel=100 order by dataOrder asc");
     }
 
     /**
@@ -274,19 +289,25 @@ public class WechatController {
      * @param result    选择部门
      * @param result2   选择会议地点
      * @param result4   上下午
+     * @param result4   上下午
      * @param date
      * @param userRowId
      * @param buMen     手输部门
      * @param person    手输人员
      * @param time      2020-1-15 11:0
      * @param openid    openid
+     * @cBbuMen         手输承办部门
+     * @result8         承办部门
+     * @result9         出席领导
+     * @lingdao         手输出席领导
      * @return
      * @throws Exception
      */
     @RequestMapping("save-form")
     @ResponseBody
     public String saveForm(String address, String msg, String result1, String result, String result2, String result4,
-                           String date, String userRowId, String buMen, String person, String time, String openid) throws Exception {
+                           String date, String userRowId, String buMen, String person, String time, String openid,
+                           String cBbuMen,String result8,String result9,String lingdao) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -333,18 +354,57 @@ public class WechatController {
         } else {
             meetingArrangement.setCallOrgsName(result);
         }
-
-//
-        if (result != null && result.length() > 0 && !result.equals("null")) {
-            String[] col = result.split(",");
-            if (col.length > 0) {
-                for (String c : col) {
-                    if (c.equals("办公室")) {
-                        meetingArrangement.setExt2("1");
-                    }
+        if(cBbuMen!=null&&cBbuMen.length()!=0){
+            if(result8!=null&result8.length()!=0){
+                meetingArrangement.setUseOrgName(cBbuMen+","+result8);
+            }
+        }else {
+            meetingArrangement.setUseOrgName(result8);
+        }
+        if(lingdao!=null&&lingdao.length()!=0){
+            if(result9!=null&result9.length()!=0){
+                meetingArrangement.setCallLeaderName(lingdao+","+result9);
+            }
+        }else {
+            meetingArrangement.setCallLeaderName(result9);
+        }
+        int resultOrder=200;
+        for(String name:meetingArrangement.getCallLeaderName().split(",")){
+            VUser vUser=vUserManager.findUniqueBy("userName",name);
+            if(vUser!=null&&vUser.getDataOrder()!=null){
+                if(vUser.getDataOrder()<resultOrder){
+                    resultOrder=vUser.getDataOrder();
                 }
             }
         }
+        meetingArrangement.setPeriod(resultOrder);
+//
+//        if (result != null && result.length() > 0 && !result.equals("null")) {
+//            String[] col = result.split(",");
+//            if (col.length > 0) {
+//                for (String c : col) {
+//                    if (c.equals("办公室")) {
+//                        meetingArrangement.setExt2("1");
+//                    }
+//                }
+//            }
+//        }
+        //判断是否为管理员
+//        List<GxSysRoleHasUser> gxSysRoleHasUsers=gxRoleHasUserManager.findBy("userId",gxSysUser.getUserId());
+//        boolean flag=true;
+//        for(GxSysRoleHasUser gxSysRoleHasUser:gxSysRoleHasUsers){
+//            if(gxSysRoleHasUser.getRoleId().equals("sys-manager-role")){
+//                flag=false;
+//                break;
+//            }
+//        }
+//        if(flag){
+//            meetingArrangement.setExt2("1");
+//        }else {
+//            meetingArrangement.setExt2("2");
+//        }
+        meetingArrangement.setExt2("1");
+
         if (time.substring(time.indexOf(":") + 1, time.length()).length() == 1) {
             time += "0";
         }
@@ -408,16 +468,160 @@ public class WechatController {
         return "成功";
     }
 
+    /**
+     * 根据姓名查找一周安排 召集人员召集领导，会议通知审核=2 ，会议通知审核过=3
+     * @param userName
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("get-meeting")
     @ResponseBody
-    public List<WVo> getMeeting(String userName) {
+    public List<com.gx.soft.weeklywork.persistence.domain.WVo> getMeeting(String userName) throws Exception {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Map<String, Integer> map=DateUtil.getWeekAndYear(df.format(new Date()));
+        String year=map.get("year").toString();
+        String week=map.get("week").toString();
 //        and startTime > ? and  endTime< ?
 //        Timestamp.valueOf(df.format(new Date())+" 00:00:00"), Timestamp.valueOf(getFetureDate(7)+" 00:00:00")
-        String hql = "from WVo where (callLeaderName like ?  or  callUsersName like ?)  order by startTime asc";
-        System.out.println();
-        return wvoManager.find(hql, "%" + userName + "%", "%" + userName + "%");
+        // 领导一周安排
+        String hql1 = "from WVo where (callLeaderName like ?  or  callUsersName like ?) and year=? and week=? and ext2=1 order by startTime asc";
+        List<com.gx.soft.weeklywork.persistence.domain.WVo> list1=wvoManager.find(hql1, "%" + userName + "%", "%" + userName + "%",year,week);
+        //待审核的会议通知
+        String hql2 = "from WVo where year=? and (week=? or week=? or week=?) and auditorName=? and ext2=2 order by startTime asc";
+        List<com.gx.soft.weeklywork.persistence.domain.WVo> list2=wvoManager.find(hql2, year,week,String.valueOf(Integer.valueOf(week)+1),String.valueOf(Integer.valueOf(week)+2),userName);
+        if(list2!=null&&list2.size()>0){
+            list1.addAll(list2);
+        }
+        List<VUser> userList=vUserManager.findBy("userName",userName);
+        if(userList!=null&&userList.size()>0){
+            VUser vUser=userList.get(0);
+            //属于部门一周安排
+            String hql33 = "from WVo where callUsersName like ? and year=? and week=? and ext2=1 order by startTime asc";
+            List<com.gx.soft.weeklywork.persistence.domain.WVo> list33=wvoManager.find(hql33,  "%" + vUser.getOrgShowName() + "%",year,week);
+            //可能还有bug 当有建设办公室和总工程师办公室时有误(但因办公室改名办公室（党办）)
+            if(vUser.getOrgShowName().equals("办公室")){
+                if(list33!=null&&list33.size()>0){
+                    for(com.gx.soft.weeklywork.persistence.domain.WVo wVo:list33){
+                        if(wVo.getCallUsersName().contains("总工程师办公室")&&(wVo.getCallUsersName()+"1").split("办公室").length<=2){
+                            continue;
+                        }
+                        list1.add(wVo);
+                    }
+                }
+            }else{
+                list1.addAll(list33);
+            }
+
+            //各分部门处长 看到领导审核过的会议通知
+            if(vUser.getUserLevel()!=null&&vUser.getUserLevel().equals("90")){
+                String hql3 = "from WVo where (callLeaderName like ?  or  callUsersName like ?) and year=? and week=? and ext2=3 order by startTime asc";
+                List<com.gx.soft.weeklywork.persistence.domain.WVo> list3=wvoManager.find(hql3, "%" + userName + "%", "%" + vUser.getOrgShowName() + "%",year,week);
+                if(list3!=null&&list3.size()>0){
+                    for(com.gx.soft.weeklywork.persistence.domain.WVo wVo:list3){
+                        if(wVo.getCallUsersName().contains("总工程师办公室")&&(wVo.getCallUsersName()+"1").split("办公室").length<=2){
+                            continue;
+                        }
+                        list1.add(wVo);
+                    }
+                }
+            }else {
+                String hql5 = "from WVo where (callLeaderName like ?  or  callUsersName like ?) and year=? and week=? and ext2=3 order by startTime asc";
+                List<com.gx.soft.weeklywork.persistence.domain.WVo> list5=wvoManager.find(hql5, "%" + userName + "%", "%" + userName + "%",year,week);
+                list1.addAll(list5);
+            }
+
+//            if(vUser.getUserLevel()!=null&&vUser.getUserLevel().equals("80")){
+//                //可以看到办公室的会议通知
+//                String hql3 = "from WVo where callUsersName like ? and year=? and week=? and ext2=3 order by startTime asc";
+//                List<com.gx.soft.weeklywork.persistence.domain.WVo> list4=wvoManager.find(hql3, "%办公室%",year,week);
+//                List<com.gx.soft.weeklywork.persistence.domain.WVo> list5=new ArrayList<>();
+//                if(list4!=null&&list4.size()>0){
+//                    for(com.gx.soft.weeklywork.persistence.domain.WVo wVo:list4){
+//                        if(wVo.getCallUsersName().contains("总工程师办公室")&&(wVo.getCallUsersName()+"1").split("办公室").length<=2){
+//                            continue;
+//                        }
+//                        list5.add(wVo);
+//                    }
+//                    list1.addAll(list5);
+//                }
+//            }
+        }
+        for(com.gx.soft.weeklywork.persistence.domain.WVo wVo:list1){
+            String dayofweek=wVo.getDayOfWeek();
+            if(dayofweek.equals("星期一")){
+                wVo.setDayOfWeek("1");
+            }else if(dayofweek.equals("星期二")){
+                wVo.setDayOfWeek("2");
+            }else if(dayofweek.equals("星期三")){
+                wVo.setDayOfWeek("3");
+            }else if(dayofweek.equals("星期四")){
+                wVo.setDayOfWeek("4");
+            }else if(dayofweek.equals("星期五")){
+                wVo.setDayOfWeek("5");
+            }else if(dayofweek.equals("星期六")){
+                wVo.setDayOfWeek("6");
+            }else if(dayofweek.equals("星期七")){
+                wVo.setDayOfWeek("7");
+            }
+        }
+        return list1;
     }
+
+    /**
+     * 获取本周 一周工作会议(公司一周安排会议)
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("get-meeting-all")
+    @ResponseBody
+    public List<com.gx.soft.weeklywork.persistence.domain.WVo> getMeetingAll() throws Exception{
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Map<String, Integer> map=DateUtil.getWeekAndYear(df.format(new Date()));
+        String year=map.get("year").toString();
+        String week=map.get("week").toString();
+//        and startTime > ? and  endTime< ?
+//        Timestamp.valueOf(df.format(new Date())+" 00:00:00"), Timestamp.valueOf(getFetureDate(7)+" 00:00:00")
+        String hql = "from WVo where year=? and week=? and ext2=1 order by startTime asc";
+        System.out.println();
+        List<com.gx.soft.weeklywork.persistence.domain.WVo> list=wvoManager.find(hql,year,week);
+        for(com.gx.soft.weeklywork.persistence.domain.WVo wVo:list){
+            String dayofweek=wVo.getDayOfWeek();
+            if(dayofweek.equals("星期一")){
+                wVo.setDayOfWeek("1");
+            }else if(dayofweek.equals("星期二")){
+                wVo.setDayOfWeek("2");
+            }else if(dayofweek.equals("星期三")){
+                wVo.setDayOfWeek("3");
+            }else if(dayofweek.equals("星期四")){
+                wVo.setDayOfWeek("4");
+            }else if(dayofweek.equals("星期五")){
+                wVo.setDayOfWeek("5");
+            }else if(dayofweek.equals("星期六")){
+                wVo.setDayOfWeek("6");
+            }else if(dayofweek.equals("星期七")){
+                wVo.setDayOfWeek("7");
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 0/有权限 1没权限 通过判断是否有登录账号和密码
+     * @param openId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("authorization")
+    @ResponseBody
+    public String authorization(String openId) throws Exception{
+        GxSysUser gxSysUser=sysUserManager.findUniqueBy("openid",openId);
+        if(gxSysUser!=null&&gxSysUser.getUserId()!=null&&gxSysUser.getUserEnName()!=null){
+            return "0";
+        }
+        return "1";
+    }
+
+
 
     public static String getFetureDate(int past) {
         Calendar calendar = Calendar.getInstance();
@@ -545,6 +749,43 @@ public class WechatController {
         result.put("flag", flag);
         result.put("message", message);
         return result;
+    }
+
+    /**
+     * 领导审核填写召集人
+     * @param rowId 会议安排主键
+     * @param callUsers 参会人员
+     * @param callOrgs 参会部门
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("pass-action")
+    @ResponseBody
+    public String passAction(String rowId,String callUsers,String callOrgs) throws Exception {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<MeetingArrangement> list=meetingArrangementManager.findBy("rowId",rowId);
+        if(list!=null&&list.size()>0){
+            MeetingArrangement meetingArrangement=list.get(0);
+            //判断是否有领导 有则上一周工作安排 无则是会议通知（只推送给部门长）
+            if(callUsers!=null&&!callUsers.equals("")){
+                //有领导上一周工作安排 状态为1
+                Map<String, String> resultStauts = useMeetingRoomIsOk(sdf.format(meetingArrangement.getStartTime()), sdf.format(meetingArrangement.getEndTime())
+                        , meetingArrangement.getMeetingRoomName(), callUsers);
+                if (resultStauts.get("flag").equals("1")) {
+                    meetingArrangement.setCallUsersName(callUsers+","+callOrgs);
+                    meetingArrangement.setExt2("1");
+                }else {
+                    return resultStauts.get("message");
+                }
+            }else {
+                //无领导上会议通知 状态为3
+                meetingArrangement.setCallUsersName(callOrgs);
+                meetingArrangement.setExt2("3");
+            }
+            meetingArrangementManager.save(meetingArrangement);
+            return "success";
+        }
+        return "服务器网络异常";
     }
 
     /**
@@ -704,38 +945,84 @@ public class WechatController {
         meetroomUseManager.save(meetRoomUse);
     }
 
-
-    @RequestMapping("send-msg1")
-    @ResponseBody
+    @RequestMapping("send-msg2")
+//    @ResponseBody
 //    @Scheduled(cron = "0/5 * *  * * ? ")
-    public void sendMsg1() throws InterruptedException {
+    public void sendMsg2() throws InterruptedException {
         String ss = HttpRequest.sendPost("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential", "&appid=wxb28503062b535ddf&secret=71763677e5f0c9cfa3660d6b74257ea2");
         JSONObject jsonObject = JSONObject.parseObject(ss);
         thing1 thing1 = new thing1("南京地铁");
         thing2 thing2 = new thing2("新街口");
         thing3 thing3 = new thing3("2020-01-01");
         Data data = new Data(thing1, thing2, thing3);
-
-
         System.out.println("南京地铁"+thing1.toString());
         System.out.println("新街口"+thing2.toString());
-
-
         WVo wVo = new WVo();
         wVo.setData(data);
         wVo.setTemplate_id("3asQKBC1H4HJGdNR1WruXLs3keCJJ6lJOWa6tzXbK7M");
         wVo.setTouser("oqCt55H3p8W04nyK2Z_jkFYfm-uk");
-        wVo.setPage("index");
-
+        wVo.setPage("pages/index/index");
         JSONObject jsonObject1 = JSONObject.parseObject(JSONObject.toJSON(wVo).toString());
         System.out.println(jsonObject1);
         System.out.println(JSONObject.toJSON(wVo).toString());
         String wwc = HttpRequest.sendPost("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + jsonObject.getString("access_token"), JSONObject.toJSON(wVo).toString());
         System.out.println(wwc);
-
 //            Thread.sleep(10000);
     }
 
+    @RequestMapping("send-msg1")
+//    @ResponseBody
+//    @Scheduled(cron = "0/5 * *  * * ? ")
+    public void sendMsg1(String biaoti,String didian,String time,String openId) throws InterruptedException {
+        String ss = HttpRequest.sendPost("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential", "&appid=wxb28503062b535ddf&secret=71763677e5f0c9cfa3660d6b74257ea2");
+        JSONObject jsonObject = JSONObject.parseObject(ss);
+        thing1 thing1 = new thing1(biaoti);
+        thing2 thing2 = new thing2(didian);
+        thing3 thing3 = new thing3(time);
+        Data data = new Data(thing1, thing2, thing3);
+        System.out.println("南京地铁"+thing1.toString());
+        System.out.println("新街口"+thing2.toString());
+        WVo wVo = new WVo();
+        wVo.setData(data);
+        wVo.setTemplate_id("3asQKBC1H4HJGdNR1WruXLs3keCJJ6lJOWa6tzXbK7M");
+        wVo.setTouser(openId);
+        wVo.setPage("pages/index/index");
+        JSONObject jsonObject1 = JSONObject.parseObject(JSONObject.toJSON(wVo).toString());
+        System.out.println(jsonObject1);
+        System.out.println(JSONObject.toJSON(wVo).toString());
+        String wwc = HttpRequest.sendPost("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + jsonObject.getString("access_token"), JSONObject.toJSON(wVo).toString());
+        System.out.println(wwc);
+//            Thread.sleep(10000);
+    }
+    @RequestMapping("sendWeChat")
+    @Scheduled(cron="0 0 8 * * ?")
+    public void sendWeChat() throws Exception{
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        logger.info(simpleDateFormat.format(date)+"定时发送短信");
+        System.out.println(simpleDateFormat.format(date)+"定时发送短信");
+        String dayofweek=DateUtil.dayForWeekByCh(simpleDateFormat.format(date));
+        Map<String, Integer> map=DateUtil.getWeekAndYear(simpleDateFormat.format(new Date()));
+        String year=map.get("year").toString();
+        String week=map.get("week").toString();
+        String hql1 = "from WVo where dayOfWeek=? and year=? and week=? and ext2=1 order by startTime asc";
+        List<com.gx.soft.weeklywork.persistence.domain.WVo> list1=wvoManager.find(hql1,dayofweek,year,week);
+        List<GxSysUser> users=sysUserManager.findBy("userLevel","100");
+        for(com.gx.soft.weeklywork.persistence.domain.WVo meetingArrangement:list1){
+            String callUsers=meetingArrangement.getCallUsersName()+","+meetingArrangement.getCallLeaderName();
+            for(GxSysUser gxSysUser:users){
+                if(gxSysUser.getOpenid()==null||gxSysUser.equals("")){
+                    continue;
+                }
+                if(callUsers!=null&&callUsers.contains(gxSysUser.getUserName())){
+                    System.out.println(meetingArrangement.getTitle()+meetingArrangement.getMeetingRoomName()+simpleDateFormat.format(meetingArrangement.getStartTime())+gxSysUser.getOpenid());
+                    logger.info(meetingArrangement.getTitle()+meetingArrangement.getMeetingRoomName()+simpleDateFormat.format(meetingArrangement.getStartTime())+gxSysUser.getOpenid());
+                    sendMsg1(meetingArrangement.getTitle(),meetingArrangement.getMeetingRoomName(),simpleDateFormat.format(meetingArrangement.getStartTime()),gxSysUser.getOpenid());
+                    sendMsg1(meetingArrangement.getTitle(),meetingArrangement.getMeetingRoomName(),simpleDateFormat.format(meetingArrangement.getStartTime()),"oqCt55MNlEsGzpaysjBhQmUATM7w");
+                }
+            }
+        }
+    }
     /**
      * 获取人的本周数量
      * @param userName
@@ -766,4 +1053,135 @@ public class WechatController {
         }
         return String.valueOf(i);
     }
+
+    /**
+     * 定时早上8点推送12点之前会议的会议
+     * @throws Exception
+     */
+    @RequestMapping("sendMessageMorning")
+    @Scheduled(cron="0 0 8 * * ?")
+    public void sendMessageMorning() throws Exception {
+        if(InetAddress.getLocalHost().getHostAddress().equals("192.168.50.5")) {
+            sendMessage("0");
+        }
+//        SendSMS sendSMS=new SendSMS();
+//        sendSMS.SendSMS("贵部门上午9:30在4A办公室有关于召开中山门大街和万家楼互通管综规划方案对接会的通知的会议","13770715730");
+//        sendSMS.SendSMS("测试","13770715730");
+
+    }
+
+    /**
+     * 定时中午12点推送12点之后的会议
+     * @throws Exception
+     */
+    @RequestMapping("sendMessageAfternoon")
+    @Scheduled(cron="0 0 12 * * ?")
+    public void sendMessageAfternoon() throws Exception {
+        if(InetAddress.getLocalHost().getHostAddress().equals("192.168.50.5")){
+            sendMessage("1");
+        }
+//        SendSMS sendSMS=new SendSMS();
+//        sendSMS.SendSMS("贵部门上午9:30在4A办公室有关于召开中山门大街和万家楼互通管综规划方案对接会的通知的会议","13770715730");
+//        sendSMS.SendSMS("测试","13770715730");
+
+    }
+
+    /**
+     * type = 0说明是上午
+     * type = 1说明是下午
+     * @param type
+     * @throws Exception
+     */
+    public void sendMessage(String type) throws Exception{
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        String time=simpleDateFormat.format(new Date());
+        String endTime = "";
+        String startTime = "";
+        String timeStutus="";
+        if(type.equals("0")){
+            startTime = time+" 00:00:00";
+            endTime = time+" 12:00:00";
+            timeStutus="上午";
+        }else {
+            startTime = time+" 14:00:00";
+            endTime = time+" 23:59:59";
+            timeStutus="下午";
+        }
+        List<MeetingArrangement> list=meetingArrangementManager.find("from MeetingArrangement where startTime<STR_TO_DATE(?,'%Y-%m-%d %H:%i:%s') and startTime>STR_TO_DATE(?,'%Y-%m-%d %H:%i:%s') order by startTime asc",endTime,startTime);
+        List<VUser> users=sysUserManager.find("from VUser where userMobileNum is not null");
+        String regex="^[1][358][0-9]{9}$";
+        for(int i=0;i<users.size();i++){
+            VUser vUser=users.get(i);
+            for(String num:vUser.getUserMobileNum().split(",")){
+                if(!num.matches(regex)){
+                    users.remove(i);
+                }
+            }
+        }
+        if(list!=null){
+            for(MeetingArrangement meetingArrangement:list){
+                String hour = new SimpleDateFormat("HH").format(meetingArrangement.getStartTime()); //09:00
+                int hh = Integer.parseInt(hour);
+                if(hh>12){
+                    hh=hh-12;
+                }
+                String startString = new SimpleDateFormat("HH:mm").format(meetingArrangement.getStartTime()); //开始时间（时、分）
+                String resultTime=String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                if(meetingArrangement.getCallUsersName()!=null&&!meetingArrangement.getExt2().equals("2")){
+                    String callUsers=meetingArrangement.getCallUsersName()+","+meetingArrangement.getCallLeaderName();
+                    for(VUser vUser:users){
+                        if(callUsers!=null&&(callUsers.contains(vUser.getUserName())||(vUser.getOrgShowName()!=null&&callUsers.contains(vUser.getOrgShowName())))){
+                            String[] mobileList=vUser.getUserMobileNum().split(",");
+                            if(vUser.getUserLevel().equals("100")){
+                                for(String mobileNum:mobileList){
+                                    sendMessage.send(mobileNum,new String[]{timeStutus+resultTime,meetingArrangement.getMeetingRoomName(),meetingArrangement.getTitle()},"547879");
+                                }
+                            }else {
+                                //如果是会议通知 人的级别不是90(部门长) continue
+                                if(meetingArrangement.getExt2().equals("3")){
+                                    if(!vUser.getUserLevel().equals("90")){
+                                        continue;
+                                    }
+                                }
+                                //办公室contain在总工程师办公室 ，二次校验
+                                if(vUser.getOrgShowName().equals("办公室")){
+                                    if(meetingArrangement.getCallUsersName().contains("总工程师办公室")){
+                                        if((meetingArrangement.getCallUsersName()+"1").split("办公室").length<3){
+                                            continue;
+                                        }
+                                    }else {
+                                        if((meetingArrangement.getCallUsersName()+"1").split("办公室").length<2){
+                                            continue;
+                                        }
+                                    }
+                                }
+                                //判断是一周安排/会议通知
+                                if(meetingArrangement.getExt2().equals("3")){
+                                    //会议通知
+                                    for(String mobileNum:mobileList){
+                                        sendMessage.send(mobileNum,new String[]{meetingArrangement.getTitle()},"550131");
+                                    }
+                                }else {
+                                    //一周工作安排通知
+                                    for(String mobileNum:mobileList){
+                                        sendMessage.send(mobileNum,new String[]{timeStutus+resultTime,meetingArrangement.getMeetingRoomName(),meetingArrangement.getTitle()},"547883");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }else {
+                    GxSysUser gxSysUser=sysUserManager.findUniqueBy("userName",meetingArrangement.getAuditorName());
+                    //领导审核通知 判读是否有审核人 参会人员是否为空(审核时需选择参会人员)
+                    if(gxSysUser!=null&&(meetingArrangement.getCallUsersName()==null||meetingArrangement.getCallUsersName().replaceAll(" ","").equals(""))){
+                        for(String mobileNum:gxSysUser.getUserMobileNum().split(",")){
+                            sendMessage.send(mobileNum,new String[]{meetingArrangement.getTitle()},"547884");
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 }

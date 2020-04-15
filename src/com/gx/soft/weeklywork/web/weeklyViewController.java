@@ -5,24 +5,39 @@ import com.gx.core.export.ExcelExportUtil;
 import com.gx.core.hibernate.PropertyFilter;
 import com.gx.core.mapper.BeanMapper;
 import com.gx.core.page.Page;
+import com.gx.core.util.StringUtils;
 import com.gx.ext.mail.MailConsumer;
 import com.gx.soft.common.util.DateUtil;
+import com.gx.soft.common.util.FileUtil;
 import com.gx.soft.sys.persistence.domain.GxSysRoleHasUser;
 import com.gx.soft.sys.persistence.domain.GxSysUser;
 import com.gx.soft.sys.persistence.domain.VUser;
 import com.gx.soft.sys.persistence.manager.GxRoleHasUserManager;
 import com.gx.soft.sys.persistence.manager.SysUserManager;
+import com.gx.soft.sys.persistence.manager.VUserManager;
 import com.gx.soft.weeklywork.persistence.domain.*;
 import com.gx.soft.weeklywork.persistence.manager.*;
 import com.gx.soft.weeklywork.persistence.vo.DateList;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,6 +56,10 @@ public class weeklyViewController {
     private MeetroomUseManager meetroomUseManager;
     @Autowired
     private SysUserManager sysUserManager;
+    @Autowired
+    private VUserManager vUserManager;
+    @Autowired
+    private GxRoleHasUserManager gxRoleHasUserManager;
     @Autowired
     private static Logger logger = LoggerFactory.getLogger(MailConsumer.class);
 
@@ -72,9 +91,10 @@ public class weeklyViewController {
             dateList.setDateName(calendar.get(Calendar.MONTH)+1+"月"+calendar.get(Calendar.DATE)+"日");
             dateList.setDate(sdf.format(calendar.getTime()));
 
-            List<MeetingArrangement> meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=? and (callLeaderName like '%"+user.getUserName()+"%' or callUsersName like '%"+user.getUserName()+"%')", dateList.getDate());
-            if(user.getUserName().equals("admin")){
-                meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=?",dateList.getDate());
+            List<MeetingArrangement> meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=? and (callLeaderName like '%"+user.getUserName()+"%' or callUsersName like '%"+user.getUserName()+"%') order by startTime asc,period asc", dateList.getDate());
+            if(user.getUserType().equals("admin")){
+//                meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=?",dateList.getDate());
+                meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where DATE_FORMAT(startTime,'%Y-%m-%d')=? order by startTime asc,period asc",dateList.getDate());
             }
             dateList.setCount(meetingArrangements.size()*2);
             dateList.setMeetList(meetingArrangements);
@@ -190,7 +210,7 @@ public class weeklyViewController {
             year=map.get("year").toString();
             week=map.get("week").toString();
         }
-        String hql="from MeetingArrangement where week=? and year=? order by startTime desc";
+        String hql="from MeetingArrangement where week=? and year=? and ext2=1 order by startTime desc";
         List<MeetingArrangement> meetingArrangements = meetingArrangementManager.find(hql,week,year);
 
         List<String> yearList=calendarIndexManager.find("select aYear from CalendarIndex group by aYear");
@@ -203,6 +223,30 @@ public class weeklyViewController {
 
 
         return "weeklywork/weeklyWork-list-new-old";
+
+    }
+
+    @RequestMapping("list-inform")
+    public String listInform(Model model,@ModelAttribute("user_session") VUser user,String year,String week) throws Exception {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        Map<String, Integer> map=DateUtil.getWeekAndYear(simpleDateFormat.format(new Date()));
+        if(year==null||week==null){
+            year=map.get("year").toString();
+            week=map.get("week").toString();
+        }
+        String hql="from MeetingArrangement where week=? and year=? and auditorName is not null order by startTime desc";
+        List<MeetingArrangement> meetingArrangements = meetingArrangementManager.find(hql,week,year);
+
+        List<String> yearList=calendarIndexManager.find("select aYear from CalendarIndex group by aYear");
+        List<String> weekList=calendarIndexManager.find("select aWeek from CalendarIndex where aYear=? order by weekStartDate asc",year);
+        model.addAttribute("yearList",yearList);
+        model.addAttribute("year",year);
+        model.addAttribute("week",week);
+        model.addAttribute("weekList",weekList);
+        model.addAttribute("list",meetingArrangements);
+
+
+        return "weeklywork/weeklyWork-list-inform";
 
     }
 
@@ -573,6 +617,173 @@ public class weeklyViewController {
         }
     }
 
+    @RequestMapping("meet-import")
+    public String userImports(Model model) {
+        return "weeklyview/meet-import";
+    }
+
+    @RequestMapping("import-save")
+    public @ResponseBody
+    Map<String, Object> UserSaveImport(@ModelAttribute("user_session") VUser user,String fileUrl,String type) throws Exception {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        String statusCode = "200", message = "";
+        Workbook wb0=null;
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdfl = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            InputStream in= new FileInputStream(fileUrl);
+            if(type.equals("ByteArrayInputStream")){
+                wb0=new XSSFWorkbook(in);
+            }else {
+                wb0=new HSSFWorkbook(in);
+            }
+            Sheet sheet = wb0.getSheetAt(0);
+            int rowNum=sheet.getPhysicalNumberOfRows();
+            String date="";
+            for(int i=0;i<=rowNum;i++) {
+                String endTime="";
+                String startTime="";
+                Row row = sheet.getRow(i);
+                if (row == null||row.getCell(2).getStringCellValue().equals("")||row.getCell(3).getStringCellValue().equals("")
+                        ||row.getCell(4).getStringCellValue().equals("")||row.getCell(5).getStringCellValue().equals("")||row.getCell(0).getStringCellValue().equals("日期")) {
+                    continue;
+                }
+                if(!row.getCell(0).getStringCellValue().equals("")){
+                    date=row.getCell(0).getStringCellValue();
+                    date=date.substring(0,date.indexOf("日")+1);
+                    SimpleDateFormat ssdsf=new SimpleDateFormat("yyyy年MM月dd日");
+                    Date w=ssdsf.parse(new Date().getYear()+1900+"年"+date);
+                    date=sdf.format(w);
+                }
+                String hour=row.getCell(1).getStringCellValue().substring(row.getCell(1).getStringCellValue().indexOf("午")+1,row.getCell(1).getStringCellValue().indexOf(":"));
+                String min=row.getCell(1).getStringCellValue().substring(row.getCell(1).getStringCellValue().indexOf(":")+1,row.getCell(1).getStringCellValue().indexOf(":")+3);
+                if(row.getCell(1).getStringCellValue().contains("下午")){
+                    hour=String.valueOf(Integer.valueOf(hour)+12);
+                    startTime = date+" "+hour+":"+min+":00";
+                    endTime=date+" 18:00:00";
+                } else if(row.getCell(1).getStringCellValue().contains("上午")){
+                    startTime = date+" "+hour+":"+min+":00";
+                    endTime=date+" 12:00:00";
+                    if(row.getCell(1).getStringCellValue().contains("全天")){
+                        endTime=date+" 18:00:00";
+                    }else if(row.getCell(1).getStringCellValue().contains("至")){
+                        endTime=date.substring(0,date.lastIndexOf("-")+1)+row.getCell(1).getStringCellValue().substring(
+                                row.getCell(1).getStringCellValue().indexOf("至")+1,row.getCell(1).getStringCellValue().indexOf("日"))+" 18:00:00";
+                    }
+                }
+                MeetingArrangement meetingArrangement=new MeetingArrangement();
+                meetingArrangement.setStartTime(new Timestamp(sdfl.parse(startTime).getTime()));
+                meetingArrangement.setEndTime(new Timestamp(sdfl.parse(endTime).getTime()));
+                meetingArrangement.setTitle(row.getCell(2).getStringCellValue());
+                meetingArrangement.setCallLeaderName(row.getCell(4).getStringCellValue());
+                meetingArrangement.setCallUsersName(row.getCell(5).getStringCellValue());
+                meetingArrangement.setUseOrgName(row.getCell(6).getStringCellValue());
+                meetingArrangement.setMeetingRoomName(row.getCell(3).getStringCellValue().replaceAll(" ",""));
+                int resultOrder=200;
+                for(String name:meetingArrangement.getCallLeaderName().split(",")){
+                    VUser vUser=vUserManager.findUniqueBy("userName",name);
+                    if(vUser!=null&&vUser.getDataOrder()!=null){
+                        if(vUser.getDataOrder()<resultOrder){
+                            resultOrder=vUser.getDataOrder();
+                        }
+                    }
+                }
+                meetingArrangement.setPeriod(resultOrder);
+                Map<String, String> result= WeeklyworkController.useMeetingRoomIsOk(sdfl.format(meetingArrangement.getStartTime()),sdfl.format(meetingArrangement.getEndTime()),
+                        meetingArrangement.getMeetingRoomName(),meetingArrangement.getCallLeaderName(),meetingArrangement.getCallUsersName(),
+                        "0",meetingArrangement.getMeetingRoomName());
+                if(!result.get("flag").equals("1")){
+                    message+=startTime+"会议室在"+meetingArrangement.getMeetingRoomName()+"保存失败<br/>";
+                    continue;
+                }
+                //新增操作
+
+                meetingArrangement.setRowId(null);
+                Timestamp ts = DateUtil.getDate();
+                meetingArrangement.setApplyDate(ts);
+                List<DicMeetroom> list=dicMeetroomManager.findBy("mtName",meetingArrangement.getMeetingRoomName());
+                if(list!=null&&list.size()>0){
+                    System.out.println("use meetingRoom");
+                    WeeklyworkController.useMeetroom(meetingArrangement.getStartTime(),meetingArrangement.getEndTime(),meetingArrangement.getMeetingRoomName(),"1");
+                }
+                meetingArrangement.setCreateUserId(user.getUserId());
+                Map<String, Integer> map=DateUtil.getWeekAndYear(sdf.format(meetingArrangement.getStartTime()));
+                meetingArrangement.setYear(map.get("year").toString());
+                meetingArrangement.setWeek(map.get("week").toString());
+                meetingArrangement.setDayOfWeek(String.valueOf(DateUtil.dayForWeekByCh(sdf.format(meetingArrangement.getStartTime()))));
+                meetingArrangement.setExt2("1");
+                //判断是否为管理员
+//                List<GxSysRoleHasUser> gxSysRoleHasUsers=gxRoleHasUserManager.findBy("userId",user.getUserId());
+//                boolean flag=true;
+//                for(GxSysRoleHasUser gxSysRoleHasUser:gxSysRoleHasUsers){
+//                    if(gxSysRoleHasUser.getRoleId().equals("sys-manager-role")){
+//                        flag=false;
+//                        break;
+//                    }
+//                }
+//                if(flag){
+//                    meetingArrangement.setExt2("1");
+//                }else {
+//                    meetingArrangement.setExt2("2");
+//                    if(meetingArrangement.getAuditorName().replaceAll(" ","").equals("")){
+//                        meetingArrangement.setExt2("1");
+//                    }
+//                }
+                meetingArrangementManager.save(meetingArrangement);
+            }
+        } catch (Exception e) {
+            statusCode = "300";
+            message = "操作失败";
+            e.printStackTrace();
+            resMap.put("statusCode", statusCode);
+            resMap.put("message", message);
+            resMap.put("closeCurrent", true);
+            return resMap;
+        }
+        resMap.put("statusCode", statusCode);
+        resMap.put("message", message);
+        resMap.put("closeCurrent", true);
+        return resMap;
+    }
+
+    @RequestMapping("import")
+    @ResponseBody
+    public	Map<String, Object> imports(@RequestParam MultipartFile file, Model model, HttpSession session) {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        model.addAttribute("message", "File '" + file.getOriginalFilename());
+        String fileOriginalName = file.getOriginalFilename();
+        String statusCode = "200", message = "上传成功";
+        String type=null;
+        try {
+            if (!StringUtils.isEmpty(fileOriginalName)) {
+                if(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).equals(".xlsx")){
+                    type="ByteArrayInputStream";
+                }else if(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).equals(".xls")){
+                    type="FileInputStream";
+                }
+                FileUtil fileHelper = new FileUtil();
+//                String decodeFileName = fileHelper.getDecodeFileName(fileOriginalName);// 文件名编码
+                String mFilePath = session.getServletContext().getRealPath("") ; // 取得服务器路径
+                mFilePath = mFilePath.substring(0, 2) + "\\jsgs" + "\\meet\\" + fileOriginalName;
+                fileHelper.createFile(mFilePath, file.getBytes());
+                resMap.put("fileUrl",mFilePath);
+                file.getInputStream().close();
+
+            }
+        } catch (Exception e) {
+            statusCode = "300";
+            message = "上传失败";
+            e.printStackTrace();
+        }
+        resMap.put("flog",false);
+        resMap.put("type",type);
+        resMap.put("statusCode", statusCode);
+        resMap.put("message", message);
+        return resMap;
+    }
+
+
     @RequestMapping("export")
     @ResponseBody
     public Map<String, Object> export(HttpServletResponse response,String weekExport,@ModelAttribute("user_session") VUser user) throws Exception {
@@ -604,9 +815,9 @@ public class weeklyViewController {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(calendarIndex.getWeekStartDate());
         for(int i=0;i<7;i++){
-            List<MeetingArrangement> meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=? and (callLeaderName like '%"+user.getUserName()+"%' or callUsersName like '%"+user.getUserName()+"%')",sdf.format(calendar.getTime()));
+            List<MeetingArrangement> meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=? and (callLeaderName like '%"+user.getUserName()+"%' or callUsersName like '%"+user.getUserName()+"%') order by startTime asc,period asc",sdf.format(calendar.getTime()));
             if(user.getUserName().equals("admin")){
-                meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=?",sdf.format(calendar.getTime()));
+                meetingArrangements=meetingArrangementManager.find("from MeetingArrangement where ext2 = '1' and DATE_FORMAT(startTime,'%Y-%m-%d')=? order by startTime asc,period asc",sdf.format(calendar.getTime()));
             }
             result.add(meetingArrangements);
             calendar.add(Calendar.DATE,1);

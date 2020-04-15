@@ -298,6 +298,7 @@ public class DateUtil {
 		String endMinus = new SimpleDateFormat("HH").format(date); //结束时间（分）
 		int hh = Integer.parseInt(hour);
 		if(hh<12){
+			startString=String.valueOf(hh)+startString.substring(startString.indexOf(":"));
 			ext3= "上午"+startString+mark;
 			//判断是否在同一天
 			if(!startDay.equals(endDay)){
@@ -312,6 +313,7 @@ public class DateUtil {
 				}
 			}
 		}else{
+			startString=String.valueOf(hh-12)+startString.substring(startString.indexOf(":"));
 			ext3 = "下午"+startString+mark;
 			if(!startDay.equals(endDay)){
 				ext3 += "(至"+endDay1+"日)";

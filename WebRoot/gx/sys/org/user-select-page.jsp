@@ -13,7 +13,7 @@
 
 
 		<div class="bjui-searchBar">
-			<label>姓名/部门名称：</label><input type="text" value="${param.filter_LIKES_roleName}" name="filter_LIKES_roleName" size="10" />&nbsp;
+			<label>姓名/部门名称：</label><input type="text" value="${param.filter_LIKES_ext}" name="filter_LIKES_ext" size="10" />&nbsp;
 			<button type="submit" class="btn-default" data-icon="search">查询</button>&nbsp;
 			<%--<a class="btn btn-orange" href="javascript:;" data-toggle="reloadsearch" data-clear-query="true" data-icon="undo">清空查询</a>&nbsp;--%>
 			<div class="pull-right">
@@ -37,8 +37,8 @@
 		<c:forEach items="${page.result}" var="org" varStatus="status">
 			<tr>
 				<td><%=count++ %></td>
-				<td>${org.roleName }</td>
-				<td ><input type="checkbox" name="ids" data-toggle="icheck" value="{${org.roleId}: ${org.roleName}}"></td>
+				<td>${org.ext }</td>
+				<td ><input type="checkbox" name="ids" data-toggle="icheck" value="{${org.roleId}: ${org.ext}}"></td>
 
 			</tr>
 
@@ -104,8 +104,11 @@
                 var $input = $(this);
                 var name = $input.attr("name");
                 if (name == "meetingArrangement[${index}].callUsersName") {
-                    $input.val(v_org_names);
-
+                    if($input.val()!=null&&!$input.val()==''){
+                        $input.val($input.val()+','+v_org_names);
+                    }else {
+                        $input.val(v_org_names);
+                    }
                 }
                 if (name == "meetingArrangement[${index}].callUsersId") {
                     $input.val(v_org_ids);

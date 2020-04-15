@@ -369,11 +369,10 @@ public class GxSysOrgController {
 
 		List<PropertyFilter> propertyFilters = PropertyFilter
 				.buildFromMap(parameterMap);
-		page = gxSysUserOrgRoleManager.pagedQuery(page, propertyFilters);
 		page.addOrder("dataOrder","asc");
-		List<GxSysUserOrgRole> orgList = (List<GxSysUserOrgRole>) page.getResult();
-		orgList=gxSysUserOrgRoleManager.find(propertyFilters);
-		page.setResult(orgList);
+		page.setPageSize(1000);
+		page = gxSysUserOrgRoleManager.pagedQuery(page, propertyFilters);
+
 		model.addAttribute("page", page);
 		model.addAttribute("orgName",orgName);
 		model.addAttribute("orgId",orgId);
@@ -419,6 +418,37 @@ public class GxSysOrgController {
 		model.addAttribute("actName", actName);
 		model.addAttribute("userId", user.getUserId());
 		return "sys/org/leader-select-page";
+	}
+
+	@RequestMapping("auditor-select-page")
+	public String getAuditor(
+			@RequestParam(defaultValue = "", required = false) String docType,
+			@RequestParam(defaultValue = "", required = false) String docId,
+			@RequestParam(defaultValue = "bringback", required = false) String opt,
+			@RequestParam(defaultValue = "add", required = false) String group,
+			@RequestParam(defaultValue = "navtab", required = false) String target,
+			@RequestParam(defaultValue = "", required = false) String boxId,
+			@ModelAttribute("user_session") VUser user, Model model,String taskId,String procId,String processKey,String actName) {
+
+		String hql = "from GxSysOrg  order by dataOrder asc";
+		List<GxSysOrg> orgList = gxSysOrgManager.find(hql);
+
+		String userHql="from GxSysUser where userLevel=100 order by dataOrder asc";
+		List<GxSysUser> userList = sysUserManager.find(userHql);
+		model.addAttribute("userList", userList);
+
+		model.addAttribute("orgList", orgList);
+		model.addAttribute("id", docId);
+		model.addAttribute("opt", opt);
+		model.addAttribute("group", group);
+		model.addAttribute("target", target);
+		model.addAttribute("boxId", boxId);
+		model.addAttribute("taskId", taskId);
+		model.addAttribute("procId", procId);
+		model.addAttribute("processKey", processKey);
+		model.addAttribute("actName", actName);
+		model.addAttribute("userId", user.getUserId());
+		return "sys/org/auditor-select-page";
 	}
 
 	/**

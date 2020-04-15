@@ -184,6 +184,8 @@
             } else if ($this.data('newurl')) {
                 data.options.url = $this.data('newurl')
                 $this.data('bjui.dialog', null)
+            }else{
+                $this.data('bjui.lookup', (data = new Lookup(this, options)))
             }
             if (typeof property == 'string' && $.isFunction(data[property])) {
                 [].shift.apply(args)

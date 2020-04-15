@@ -10,10 +10,14 @@ import com.gx.core.page.Page;
 import com.gx.core.util.StringUtils;
 import com.gx.soft.common.util.DateUtil;
 import com.gx.soft.common.util.FileUtil;
+import com.gx.soft.common.util.SendMessage;
+import com.gx.soft.sys.persistence.domain.GxSysOrg;
 import com.gx.soft.sys.persistence.domain.GxSysRoleHasUser;
+import com.gx.soft.sys.persistence.domain.GxSysUser;
 import com.gx.soft.sys.persistence.domain.VUser;
 import com.gx.soft.sys.persistence.manager.GxRoleHasUserManager;
 import com.gx.soft.sys.persistence.manager.SysUserManager;
+import com.gx.soft.sys.persistence.manager.VUserManager;
 import com.gx.soft.weeklywork.persistence.domain.*;
 import com.gx.soft.weeklywork.persistence.manager.*;
 import com.gx.soft.weeklywork.persistence.vo.DateList;
@@ -30,7 +34,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,20 +48,33 @@ import java.util.*;
 @SessionAttributes("user_session")
 public class WeeklyworkController {
     @Autowired
-    private MeetingArrangementManager meetingArrangementManager;
+    public WeeklyworkController(MeetingArrangementManager meetingArrangementManager,CalendarIndexManager calendarIndexManager,MeetroomUseManager meetroomUseManager,
+                                GxSysUserOrgRoleManager gxSysUserOrgRoleManager,DicMeetroomManager dicMeetroomManager){
+        WeeklyworkController.meetingArrangementManager=meetingArrangementManager;
+        WeeklyworkController.calendarIndexManager=calendarIndexManager;
+        WeeklyworkController.meetroomUseManager=meetroomUseManager;
+        WeeklyworkController.gxSysUserOrgRoleManager=gxSysUserOrgRoleManager;
+        WeeklyworkController.dicMeetroomManager=dicMeetroomManager;
+    }
+    private static MeetingArrangementManager meetingArrangementManager;
     @Autowired
     private FileRecordManager fileRecordManager;
-    @Autowired
-    private CalendarIndexManager calendarIndexManager;
-    @Autowired
-    private MeetroomUseManager meetroomUseManager;
+//    @Autowired
+    private static CalendarIndexManager calendarIndexManager;
+//    @Autowired
+    private static MeetroomUseManager meetroomUseManager;
     @Autowired
     private GxRoleHasUserManager gxRoleHasUserManager;
+//    @Autowired
+    private static GxSysUserOrgRoleManager gxSysUserOrgRoleManager;
+//    @Autowired
+    private static DicMeetroomManager dicMeetroomManager;
     @Autowired
-    private GxSysUserOrgRoleManager gxSysUserOrgRoleManager;
+    private SendMessage sendMessage;
     @Autowired
-    private DicMeetroomManager dicMeetroomManager;
-
+    private SysUserManager sysUserManager;
+    @Autowired
+    private VUserManager vUserManager;
     private ArrayList<String>rowIdList=new ArrayList<>();
     private BeanMapper beanMapper = new BeanMapper();
 
@@ -363,6 +384,7 @@ public class WeeklyworkController {
         resMap.put("reload", true);
         return resMap;
     }
+
     /**
      * 一周安排删除
      * @param rowId
@@ -379,9 +401,23 @@ public class WeeklyworkController {
                         // 删除会议室占用
                         MeetingArrangement meet=meetingArrangementManager.get(rowId);
                         useMeetroom(meet.getStartTime(),meet.getEndTime(),meet.getMeetingRoomName(),"0");
-
                         fileRecordManager.remove(fileRecordManager.findUniqueBy("arrangementId",rowId));
                         meetingArrangementManager.removeById(rowId);
+                        if(meet.getStartTime().after(new Date())){
+                            String timeStutus = new SimpleDateFormat("MM月dd日").format(meet.getStartTime()); //09:00
+                            timeStutus+=meet.getDayOfWeek();
+                            String hour = new SimpleDateFormat("HH").format(meet.getStartTime()); //09:00
+                            String startString = new SimpleDateFormat("HH:mm").format(meet.getStartTime()); //开始时间（时、分）
+
+                            int hh = Integer.parseInt(hour);
+                            if(hh>12){
+                                hh=hh-12;
+                                timeStutus+="下午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                            }else {
+                                timeStutus+="上午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                            }
+                            sendMessage(meet,"553240","553239",new String[]{timeStutus,"关于"+meet.getTitle()},new String[]{timeStutus,"关于"+meet.getTitle()});
+                        }
                     }
 
         } catch (Exception e) {
@@ -455,7 +491,7 @@ public class WeeklyworkController {
      * @param type（会议室使用类型 1：已申请未确认、2：已确定、0：没占用）
      * @throws Exception
      */
-    public void saveMeetRoomUse(int weekDay,String dayType,String meetRoomName,String calenderIndex, String type) throws Exception {
+    public static void saveMeetRoomUse(int weekDay,String dayType,String meetRoomName,String calenderIndex, String type) throws Exception {
         String hql = "";
         if (dayType.equals("上午")){
             hql = "select a from MeetroomUse a where a.meetingRoomName = ? " +
@@ -526,7 +562,7 @@ public class WeeklyworkController {
      * @param status        解除/绑定 ，1/绑定 、0/解绑
      * @throws Exception
      */
-    public void useMeetroom(Timestamp startTime,Timestamp endTime,String meetRoomName,String status) throws Exception{
+    public static void useMeetroom(Timestamp startTime,Timestamp endTime,String meetRoomName,String status) throws Exception{
         String startType="";
         String endType="";
         Map<String, Object> parameterMap=new HashMap<>();
@@ -675,6 +711,16 @@ public class WeeklyworkController {
         meetingArrangement.setUseOrgId(object.get("useOrgId").toString());
         meetingArrangement.setMeetingRoomName(object.get("meetingRoomName").toString());
 //        meetingArrangement.setMeetingRoomId(object.get("meetingRoomId").toString());
+        int resultOrder=200;
+        for(String name:meetingArrangement.getCallLeaderName().split(",")){
+            VUser vUser=vUserManager.findUniqueBy("userName",name);
+            if(vUser!=null&&vUser.getDataOrder()!=null){
+                if(vUser.getDataOrder()<resultOrder){
+                    resultOrder=vUser.getDataOrder();
+                }
+            }
+        }
+        meetingArrangement.setPeriod(resultOrder);
 
         Map<String, String> result= useMeetingRoomIsOk(sdfl.format(meetingArrangement.getStartTime()),sdfl.format(meetingArrangement.getEndTime()),
                 meetingArrangement.getMeetingRoomName(),meetingArrangement.getCallLeaderName(),meetingArrangement.getCallUsersName(),
@@ -752,7 +798,7 @@ public class WeeklyworkController {
      * @return
      * @throws Exception
      */
-    public Map<String, String> useMeetingRoomIsOk(String start, String end,String meetingRoom,String callLeaderName,String callUsersName,String rowId,String roomName) throws Exception {
+    public static Map<String, String> useMeetingRoomIsOk(String start, String end,String meetingRoom,String callLeaderName,String callUsersName,String rowId,String roomName) throws Exception {
         Map<String, String> result = new HashMap<>();
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH");
         String flag = "0";
@@ -770,7 +816,7 @@ public class WeeklyworkController {
         if(roomApplyList1!=null && roomApplyList1.size() > 0){
             //已占用
             flag="0";
-            message="该时间段已有会议安排";
+            message="该时间段会议室已被占用";
 
         }else{
             String hql2 = "from MeetingArrangement where meetingRoomName = ? and rowId !=? " +
@@ -781,7 +827,7 @@ public class WeeklyworkController {
             if(roomApplyList2 != null && roomApplyList2.size() > 0){
                 //已占用
                 flag="0";
-                message="该时间段已有会议安排";
+                message="该时间段会议室已被占用";
 
             }else{
                 //未占用
@@ -797,7 +843,7 @@ public class WeeklyworkController {
             if(roomApplyList3 != null && roomApplyList3.size() > 0){
                 //已占用
                 flag="0";
-                message="该时间段已有会议安排";
+                message="该时间段会议室已被占用";
             }else{
                 //未占用
                 flag="1";
@@ -839,7 +885,7 @@ public class WeeklyworkController {
                     if((meetingArrangement.getCallLeaderName()!=null&&meetingArrangement.getCallLeaderName().contains(leaderName))||
                             (meetingArrangement.getCallUsersName()!=null&&meetingArrangement.getCallUsersName().contains(leaderName))){
                         flag="3";
-                        message=leaderName+"在"+sdf.format(meetingArrangement.getStartTime())+"点已有会议";
+                        message=leaderName+"在"+msg(meetingArrangement.getStartTime(),meetingArrangement.getDayOfWeek())+"已有会议";
                         result.put("flag",flag);
                         result.put("message",message);
                         return result;
@@ -861,7 +907,7 @@ public class WeeklyworkController {
                     if((meetingArrangement.getCallLeaderName()!=null&&meetingArrangement.getCallLeaderName().contains(leaderName))||
                             (meetingArrangement.getCallUsersName()!=null&&meetingArrangement.getCallUsersName().contains(leaderName))){
                         flag="3";
-                        message=leaderName+"在"+sdf.format(meetingArrangement.getStartTime())+"点已有会议";
+                        message=leaderName+"在"+msg(meetingArrangement.getStartTime(),meetingArrangement.getDayOfWeek())+"已有会议";
                         result.put("flag",flag);
                         result.put("message",message);
                         return result;
@@ -882,7 +928,7 @@ public class WeeklyworkController {
                     if((meetingArrangement.getCallLeaderName()!=null&&meetingArrangement.getCallLeaderName().contains(leaderName))||
                             (meetingArrangement.getCallUsersName()!=null&&meetingArrangement.getCallUsersName().contains(leaderName))){
                         flag="3";
-                        message=leaderName+"在"+sdf.format(meetingArrangement.getStartTime())+"点已有会议";
+                        message=leaderName+"在"+msg(meetingArrangement.getStartTime(),meetingArrangement.getDayOfWeek())+"已有会议";
                         result.put("flag",flag);
                         result.put("message",message);
                         return result;
@@ -896,11 +942,26 @@ public class WeeklyworkController {
         return result;
     }
 
+    /**
+     * 可编辑表单 单条保存
+     * @param recordListVo 填写内容对象（未用该方法，此方法为批量保存list）
+     * @param user  登录id
+     * @param rowId 主键 判断是新增还是修改
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param title 标题
+     * @param callLeaderName 召集领导
+     * @param callUsersName 召集人
+     * @param useOrgName    承办部门
+     * @param meetingRoomName   会议地点
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("one-save")
     @Transactional(rollbackFor = { Exception.class })
     public @ResponseBody
     Map<String, Object> oneSave(JsscydVo recordListVo, @ModelAttribute("user_session") VUser user,String rowId,String startTime,String endTime,String title,
-                                String callLeaderName, String callUsersName, String useOrgName, String meetingRoomName) throws Exception {
+                                String callLeaderName, String callUsersName, String useOrgName, String meetingRoomName,String pass) throws Exception {
         Map<String, Object> resMap = new HashMap<String, Object>();
         String statusCode = "200", message = "提交成功";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -914,24 +975,187 @@ public class WeeklyworkController {
         meetingArrangement.setCallUsersName(callUsersName.replaceAll(" ",""));
         meetingArrangement.setUseOrgName(useOrgName.replaceAll(" ",""));
         meetingArrangement.setMeetingRoomName(meetingRoomName.replaceAll(" ",""));
+        meetingArrangement.setExt2("1");
+        //设置领导同一时间段排序
+        int resultOrder=200;
+        for(String name:meetingArrangement.getCallLeaderName().split(",")){
+            VUser vUser=vUserManager.findUniqueBy("userName",name);
+            if(vUser!=null&&vUser.getDataOrder()!=null){
+                if(vUser.getDataOrder()<resultOrder){
+                    resultOrder=vUser.getDataOrder();
+                }
+            }
+        }
+        meetingArrangement.setPeriod(resultOrder);
 
 
+        Map<String, Integer> map=DateUtil.getWeekAndYear(sdf.format(meetingArrangement.getStartTime()));
+        meetingArrangement.setYear(map.get("year").toString());
+        meetingArrangement.setWeek(map.get("week").toString());
+        meetingArrangement.setDayOfWeek(String.valueOf(DateUtil.dayForWeekByCh(sdf.format(meetingArrangement.getStartTime()))));
         Map<String, String> result= useMeetingRoomIsOk(sdfl.format(meetingArrangement.getStartTime()),sdfl.format(meetingArrangement.getEndTime()),
                 meetingArrangement.getMeetingRoomName(),meetingArrangement.getCallLeaderName(),meetingArrangement.getCallUsersName(),
                 rowId,meetingArrangement.getMeetingRoomName());
         if(!result.get("flag").equals("1")){
-            statusCode = "300";
-            resMap.put("statusCode", statusCode);
-            resMap.put("message", result.get("message"));
-            return resMap;
+            if(!(pass!=null&&pass.equals("pass"))){
+                statusCode = "300";
+                resMap.put("statusCode", statusCode);
+                resMap.put("message", result.get("message"));
+                return resMap;
+            }
+
         }
+
+        //新增操作
         if(rowId.equals("0")){
             meetingArrangement.setRowId(null);
             Timestamp ts = DateUtil.getDate();
             meetingArrangement.setApplyDate(ts);
             useMeetroom(meetingArrangement.getStartTime(),meetingArrangement.getEndTime(),meetingArrangement.getMeetingRoomName(),"1");
             meetingArrangement.setCreateUserId(user.getUserId());
+
+            String timeStutus = new SimpleDateFormat("MM月dd日").format(meetingArrangement.getStartTime()); //09:00
+            timeStutus+=meetingArrangement.getDayOfWeek();
+            String hour = new SimpleDateFormat("HH").format(meetingArrangement.getStartTime()); //09:00
+            String startString = new SimpleDateFormat("HH:mm").format(meetingArrangement.getStartTime()); //开始时间（时、分）
+
+            int hh = Integer.parseInt(hour);
+            if(hh>12){
+                hh=hh-12;
+                timeStutus+="下午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+            }else {
+                timeStutus+="上午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+            }
+            sendMessage(meetingArrangement,"553444","553446",new String[]{timeStutus,meetingArrangement.getMeetingRoomName(),meetingArrangement.getTitle()},
+                    new String[]{timeStutus,meetingArrangement.getMeetingRoomName(),meetingArrangement.getTitle()});
         }else {
+            //更新操作
+            meetingArrangement.setRowId(rowId);
+            MeetingArrangement dest = meetingArrangementManager.get(rowId);
+            if (!dest.getMeetingRoomName().equals(meetingArrangement.getMeetingRoomName()) || !dest.getStartTime().equals(meetingArrangement.getStartTime())
+                    || !dest.getEndTime().equals(meetingArrangement.getEndTime())) {
+                //删除原来的占用（设为0）
+                useMeetroom(dest.getStartTime(),dest.getEndTime(),dest.getMeetingRoomName(),"0");
+                //添加新的占用（设为1）
+                List<DicMeetroom> list=dicMeetroomManager.findBy("mtName",meetingArrangement.getMeetingRoomName());
+                if(list!=null&&list.size()>0){
+                    useMeetroom(meetingArrangement.getStartTime(),meetingArrangement.getEndTime(),meetingArrangement.getMeetingRoomName(),"1");
+                }
+            }
+            if(!dest.getMeetingRoomName().equals(meetingArrangement.getMeetingRoomName())||!dest.getTitle().equals(meetingArrangement.getTitle())||
+                    dest.getStartTime().getTime()!=meetingArrangement.getStartTime().getTime()){
+                String beforeTimeStutus = new SimpleDateFormat("MM月dd日").format(dest.getStartTime()); //09:00
+                beforeTimeStutus+=dest.getDayOfWeek();
+                String hour = new SimpleDateFormat("HH").format(dest.getStartTime()); //09:00
+                String startString = new SimpleDateFormat("HH:mm").format(dest.getStartTime()); //开始时间（时、分）
+                int hh = Integer.parseInt(hour);
+                if(hh>12){
+                    hh=hh-12;
+                    beforeTimeStutus+="下午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                }else {
+                    beforeTimeStutus+="上午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                }
+                String afterTimeStutus = new SimpleDateFormat("MM月dd日").format(meetingArrangement.getStartTime()); //09:00
+                afterTimeStutus+=meetingArrangement.getDayOfWeek();
+                hour = new SimpleDateFormat("HH").format(meetingArrangement.getStartTime()); //09:00
+                startString = new SimpleDateFormat("HH:mm").format(meetingArrangement.getStartTime()); //开始时间（时、分）
+                hh = Integer.parseInt(hour);
+                if(hh>12){
+                    hh=hh-12;
+                    afterTimeStutus+="下午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                }else {
+                    afterTimeStutus+="上午"+String.valueOf(hh)+startString.substring(startString.indexOf(":"));
+                }
+                System.out.println(beforeTimeStutus+dest.getMeetingRoomName()+dest.getTitle());
+                System.out.println(afterTimeStutus+meetingArrangement.getMeetingRoomName()+meetingArrangement.getTitle());
+                sendMessage(dest,"553738","553740",new String[]{beforeTimeStutus,dest.getMeetingRoomName(),dest.getTitle(),
+                                afterTimeStutus,meetingArrangement.getMeetingRoomName()+"关于"+meetingArrangement.getTitle()},
+                        new String[]{beforeTimeStutus,dest.getMeetingRoomName(),dest.getTitle(),
+                                afterTimeStutus,meetingArrangement.getMeetingRoomName()+"关于"+meetingArrangement.getTitle()});
+                beanMapper.copy(meetingArrangement, dest);
+                meetingArrangement=dest;
+            }
+        }
+        //判断是否为管理员
+//        List<GxSysRoleHasUser> gxSysRoleHasUsers=gxRoleHasUserManager.findBy("userId",user.getUserId());
+//        boolean flag=true;
+//        for(GxSysRoleHasUser gxSysRoleHasUser:gxSysRoleHasUsers){
+//            if(gxSysRoleHasUser.getRoleId().equals("sys-manager-role")){
+//                flag=false;
+//                break;
+//            }
+//        }
+//        if(flag){
+//            meetingArrangement.setExt2("1");
+//        }else {
+//            meetingArrangement.setExt2("2");
+//        }
+        meetingArrangementManager.save(meetingArrangement);
+        resMap.put("statusCode", statusCode);
+        resMap.put("message", result.get("message"));
+        return  resMap;
+    }
+
+    /**
+     * 可编辑表单 单条保存
+     * @param recordListVo 填写内容对象（未用该方法，此方法为批量保存list）
+     * @param user  登录id
+     * @param rowId 主键 判断是新增还是修改
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param title 标题
+     * @param callLeaderName 召集领导
+     * @param useOrgName    承办部门
+     * @param meetingRoomName   会议地点
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("inform-save")
+    @Transactional(rollbackFor = { Exception.class })
+    public @ResponseBody
+    Map<String, Object> informSave(JsscydVo recordListVo, @ModelAttribute("user_session") VUser user,String rowId,String startTime,String endTime,String title,
+                                String callLeaderName, String useOrgName, String meetingRoomName,String auditorName,String fileName) throws Exception {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        String statusCode = "200", message = "提交成功";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdfl = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Timestamp ts = DateUtil.getDate();
+        MeetingArrangement meetingArrangement=new MeetingArrangement();
+        meetingArrangement.setStartTime(Timestamp.valueOf(startTime));
+        meetingArrangement.setEndTime(Timestamp.valueOf(endTime));
+        meetingArrangement.setTitle(title.replaceAll(" ",""));
+        meetingArrangement.setCallLeaderName(callLeaderName.replaceAll(" ",""));
+        int resultOrder=200;
+        for(String name:meetingArrangement.getCallLeaderName().split(",")){
+            VUser vUser=vUserManager.findUniqueBy("userName",name);
+            if(vUser!=null&&vUser.getDataOrder()!=null){
+                if(vUser.getDataOrder()<resultOrder){
+                    resultOrder=vUser.getDataOrder();
+                }
+            }
+        }
+        meetingArrangement.setPeriod(resultOrder);
+        meetingArrangement.setUseOrgName(useOrgName.replaceAll(" ",""));
+        meetingArrangement.setMeetingRoomName(meetingRoomName.replaceAll(" ",""));
+        meetingArrangement.setAuditorName(auditorName.replaceAll(" ",""));
+        meetingArrangement.setRemark(fileName);
+//        Map<String, String> result= useMeetingRoomIsOk(sdfl.format(meetingArrangement.getStartTime()),sdfl.format(meetingArrangement.getEndTime()),
+//                meetingArrangement.getMeetingRoomName(),meetingArrangement.getCallLeaderName(),meetingArrangement.getCallUsersName(),
+//                rowId,meetingArrangement.getMeetingRoomName());
+//        if(!result.get("flag").equals("1")){
+//            statusCode = "300";
+//            resMap.put("statusCode", statusCode);
+//            resMap.put("message", result.get("message"));
+//            return resMap;
+//        }
+        //新增操作
+        if(rowId.equals("0")){
+            meetingArrangement.setRowId(null);
+            meetingArrangement.setApplyDate(ts);
+            useMeetroom(meetingArrangement.getStartTime(),meetingArrangement.getEndTime(),meetingArrangement.getMeetingRoomName(),"1");
+            meetingArrangement.setCreateUserId(user.getUserId());
+        }else {
+            //更新操作
             meetingArrangement.setRowId(rowId);
             MeetingArrangement dest = meetingArrangementManager.get(rowId);
             if (!dest.getMeetingRoomName().equals(meetingArrangement.getMeetingRoomName()) || !dest.getStartTime().equals(meetingArrangement.getStartTime())
@@ -946,18 +1170,51 @@ public class WeeklyworkController {
             }
             beanMapper.copy(meetingArrangement, dest);
             meetingArrangement=dest;
-            }
+        }
         Map<String, Integer> map=DateUtil.getWeekAndYear(sdf.format(meetingArrangement.getStartTime()));
         meetingArrangement.setYear(map.get("year").toString());
         meetingArrangement.setWeek(map.get("week").toString());
         meetingArrangement.setDayOfWeek(String.valueOf(DateUtil.dayForWeekByCh(sdf.format(meetingArrangement.getStartTime()))));
-        meetingArrangement.setExt2("1");
+        //判断是否为管理员
+//        List<GxSysRoleHasUser> gxSysRoleHasUsers=gxRoleHasUserManager.findBy("userId",user.getUserId());
+//        boolean flag=true;
+//        for(GxSysRoleHasUser gxSysRoleHasUser:gxSysRoleHasUsers){
+//            if(gxSysRoleHasUser.getRoleId().equals("sys-manager-role")){
+//                flag=false;
+//                break;
+//            }
+//        }
+//        if(flag){
+//            meetingArrangement.setExt2("1");
+//        }else {
+//            meetingArrangement.setExt2("2");
+//        }
+        meetingArrangement.setExt2("2");
         meetingArrangementManager.save(meetingArrangement);
 
+        FileRecord fileRecord= fileRecordManager.findUniqueBy("arrangementId",meetingArrangement.getRowId());
+        String mFilePath = "C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\"+fileName;
+        if(fileRecord!=null){
+            fileRecord.setFilePath(mFilePath);
+            fileRecord.setFileName(fileName);
+            fileRecord.setFileType(Files.probeContentType(Paths.get(mFilePath)));
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+            fileRecord.setUploadTime(time);
+        }else {
+            fileRecord = new FileRecord();
+            fileRecord.setArrangementId(meetingArrangement.getRowId());
+            fileRecord.setFilePath(mFilePath);
+            fileRecord.setFileName(fileName);
+            fileRecord.setFileType(Files.probeContentType(Paths.get(mFilePath)));
+        }
+
+        fileRecordManager.save(fileRecord);
+
         resMap.put("statusCode", statusCode);
-        resMap.put("message", result.get("message"));
+        resMap.put("message", message);
         return  resMap;
     }
+
 
 //    /**
 //     * 可编辑表格 全部修改保存
@@ -1027,5 +1284,147 @@ public class WeeklyworkController {
 //
 //        return resMap;
 //    }
+    @RequestMapping("img-select-upload")
+    public String imgUpload(Model model,String docId,String group,String fileName) {
 
+        model.addAttribute("id", docId);
+        model.addAttribute("group", group);
+        if(fileName!=null&&!fileName.equals("")){
+            List<FileRecord> fileRecords=fileRecordManager.findBy("fileName",fileName);
+            if(fileRecords!=null&&fileRecords.size()!=0){
+                model.addAttribute("fileName", fileName);
+            }else {
+                model.addAttribute("fileName", "");
+            }
+        }else {
+            model.addAttribute("fileName", "");
+        }
+        return "weeklywork/img-upload";
+    }
+    @RequestMapping("img-import")
+    @ResponseBody
+    public	Map<String, Object> imports(@RequestParam MultipartFile file, Model model, HttpSession session) {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        model.addAttribute("message", "File '" + file.getOriginalFilename());
+        String fileOriginalName = file.getOriginalFilename();
+        String statusCode = "200", message = "上传成功";
+        String type=null;
+        try {
+            if (!StringUtils.isEmpty(fileOriginalName)) {
+                FileUtil fileHelper = new FileUtil();
+//                String decodeFileName = fileHelper.getDecodeFileName(fileOriginalName);// 文件名编码
+                String mFilePath = "C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\" + fileOriginalName;
+                fileHelper.createFile(mFilePath, file.getBytes());
+                resMap.put("fileUrl",mFilePath);
+                file.getInputStream().close();
+
+            }
+        } catch (Exception e) {
+            statusCode = "300";
+            message = "上传失败";
+            e.printStackTrace();
+        }
+        resMap.put("flog",false);
+        resMap.put("type",type);
+        resMap.put("statusCode", statusCode);
+        resMap.put("message", message);
+        return resMap;
+    }
+
+    /**
+     * 附件下载
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "fileDownloadByName")
+    @ResponseBody
+    public   Map<String, Object> fileDownLoadByName( @RequestParam String fileName, HttpServletRequest request,
+                                               HttpServletResponse response) throws IOException {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+
+        String filePath = "C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\" + fileName;
+        FileUtil fileHelper = new FileUtil();
+        fileHelper.downloadFile(filePath, request, response, fileName);
+        resMap.put("statusCode", "200");
+        resMap.put("message", "下载成功");
+
+        return resMap;
+    }
+
+    /**
+     * 发送短信
+     * @param meet 传召集人员 选取发送短信的人
+     * @param tplId 腾讯云id
+     * @param tplIdOrg
+     * @param text  id1内容
+     * @param textOrg
+     * @throws Exception
+     */
+    public void sendMessage(MeetingArrangement meet,String tplId,String tplIdOrg,String[] text,String[] textOrg) throws Exception {
+        if(!DateUtil.dayForWeekByCh(new SimpleDateFormat("yyyy-MM-dd").format(new Date())).equals("星期一")){
+            List<VUser> users=sysUserManager.find("from VUser where userMobileNum is not null");
+            String regex="^[1][358][0-9]{9}$";
+            for(int i=0;i<users.size();i++){
+                VUser vUser=users.get(i);
+                for(String num:vUser.getUserMobileNum().split(",")){
+                    if(!num.matches(regex)){
+                        users.remove(i);
+                    }
+                }
+            }
+            String callUsers=meet.getCallUsersName()+","+meet.getCallLeaderName();
+            for(VUser vUser:users){
+                if(callUsers!=null&&(callUsers.contains(vUser.getUserName())||(vUser.getOrgShowName()!=null&&callUsers.contains(vUser.getOrgShowName())))) {
+                    String[] mobileList=vUser.getUserMobileNum().split(",");
+                    if(vUser.getUserLevel()!=null&&vUser.getUserLevel().equals("100")){
+                        for(String mobileNum:mobileList){
+                            if(InetAddress.getLocalHost().getHostAddress().equals("192.168.50.5")) {
+                                sendMessage.send(mobileNum,text,tplId);
+                            }
+                        }
+                    }else {
+                        if(meet.getExt2().equals("3")){
+                            if(!vUser.getUserLevel().equals("90")){
+                                continue;
+                            }
+                        }
+                        if(vUser.getOrgShowName().equals("办公室")){
+                            if(meet.getCallUsersName().contains("总工程师办公室")){
+                                if((meet.getCallUsersName()+"1").split("办公室").length<3){
+                                    continue;
+                                }
+                            }else {
+                                if((meet.getCallUsersName()+"1").split("办公室").length<2){
+                                    continue;
+                                }
+                            }
+                        }
+                        for(String mobileNum:mobileList){
+                            if(InetAddress.getLocalHost().getHostAddress().equals("192.168.50.5")) {
+                                sendMessage.send(mobileNum,textOrg,tplIdOrg);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    public static String msg(Date startTime,String dayOfWeek){
+        String msg=new SimpleDateFormat("MM月dd日").format(startTime)+dayOfWeek;
+        String hour = new SimpleDateFormat("HH").format(startTime); //09:00
+        String hourMin=new SimpleDateFormat("HH:mm").format(startTime);
+        int hh = Integer.parseInt(hour);
+
+        if(hh>12){
+            hh=hh-12;
+            msg+="上午";
+        }else {
+            msg+="上午";
+        }
+        msg+=String.valueOf(hh)+hourMin.substring(hourMin.indexOf(":"));
+        return msg;
+    }
 }
