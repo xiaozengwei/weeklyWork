@@ -1,16 +1,26 @@
 /*
 Navicat MySQL Data Transfer
 
+<<<<<<< HEAD
 Source Server         : 221.6.30.202_13306
 Source Server Version : 50625
 Source Host           : 221.6.30.202:13306
+=======
+Source Server         : 10.0.0.12_3306
+Source Server Version : 50625
+Source Host           : 10.0.0.12:3306
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 Source Database       : meeting
 
 Target Server Type    : MYSQL
 Target Server Version : 50625
 File Encoding         : 65001
 
+<<<<<<< HEAD
 Date: 2020-02-19 21:41:26
+=======
+Date: 2020-01-19 16:48:08
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -569,6 +579,7 @@ CREATE TABLE `dic_meetroom` (
 -- ----------------------------
 -- Records of dic_meetroom
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f88733feb0000', '4楼A', '1401', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f88735fbd0001', '4楼B', '1402', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887375ec0002', '4楼C', '1403', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
@@ -578,6 +589,17 @@ INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8873ecf60005', '401', '2
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887401c60006', '410', '2410', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887418a50007', '205', '2205', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
 INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8875b6640016', '213', '2213', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+=======
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f88733feb0000', '4楼会议室A', '1401', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f88735fbd0001', '4楼会议室B', '1402', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887375ec0002', '4楼会议室C', '1403', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8873bf4f0003', '所街208室', '2208', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8873d8230004', '所街306室', '2306', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8873ecf60005', '所街401室', '2401', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887401c60006', '所街410室', '2410', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f887418a50007', '所街205室', '2205', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+INSERT INTO `dic_meetroom` VALUES ('8a80800a6f883307016f8875b6640016', '所街213室', '2213', null, 'xzbg-meetroom', null, null, null, null, '开放', null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for file_record
@@ -602,8 +624,11 @@ CREATE TABLE `file_record` (
 -- ----------------------------
 -- Records of file_record
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `file_record` VALUES ('402881eb7053d0c0017053e94a480012', '402881eb7053d0c0017053e3f201000e', 'IMG_6479(20200107-213611).JPG', 'image/jpeg', null, 'C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\IMG_6479(20200107-213611).JPG', null, null, '2020-02-18 13:42:50', null, null, null);
 INSERT INTO `file_record` VALUES ('402881eb7056b8b2017056c3efbc0000', '4028b285704ec9000170525481c90032', 'IMG_6479(20200107-213611).JPG', 'image/jpeg', null, 'C:\\developTools\\apache-tomcat-7.0.75_64\\webapps\\wechat-file\\IMG_6479(20200107-213611).JPG', null, null, '2020-02-18 13:33:47', null, null, null);
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 INSERT INTO `file_record` VALUES ('8a80800a6f412f89016f4134b3be0000', '8a80800a6f412f89016f4134c0760001', '水表异常状态.docx', 'application/octet-stream', 'f4d3ad94-2562-4b2d-b986-e98bce09089c.docx', 'C:\\njdtjsis\\weeklyWork\\f4d3ad94-2562-4b2d-b986-e98bce09089c.docx', 'admin', 'admin', '2019-12-26 15:56:11', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80800a6f5ac3e9016f5adf7de20000', '8a80800a6f5ac3e9016f5adf8e270003', '水表异常状态.docx', 'application/octet-stream', '8b833acb-0947-49f7-8785-531ac67c20d4.docx', 'C:\\njdtjsis\\weeklyWork\\8b833acb-0947-49f7-8785-531ac67c20d4.docx', 'admin', 'admin', '2019-12-31 15:33:14', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80800a6f5b13bf016f5b1c22780000', '8a80800a6f5b13bf016f5b1c27db0002', '水表异常状态.docx', 'application/octet-stream', '6b1af836-6d73-4e5d-ac59-feaef385c956.docx', 'C:\\njdtjsis\\weeklyWork\\6b1af836-6d73-4e5d-ac59-feaef385c956.docx', 'admin', 'admin', '2019-12-31 16:39:28', null, null, null);
@@ -626,9 +651,12 @@ INSERT INTO `file_record` VALUES ('8a80808d6fb2b710016fb2cb1d300004', null, 'fil
 INSERT INTO `file_record` VALUES ('8a80808d6fb2b710016fb2cd62eb0006', '8a80808d6fb2b710016fb2cdd32f0007', 'file7b7788c9-2789-4f1a-9919-84d89cd85c10.jpg', 'image/jpg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\file7b7788c9-2789-4f1a-9919-84d89cd85c10.jpg', null, null, '2020-01-17 17:20:02', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80808d6fb2b710016fb2d0b2d40008', null, 'fileb8bc4a43-31d3-45e3-9428-866f2dde87d7.jpg', 'image/jpg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\fileb8bc4a43-31d3-45e3-9428-866f2dde87d7.jpg', null, null, '2020-01-17 17:23:39', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80808d6fb2d403016fbb9cc6750000', null, 'filec060ac4f-91c4-4750-ae81-de1a0d33705e.jpg', 'image/jpg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\filec060ac4f-91c4-4750-ae81-de1a0d33705e.jpg', null, null, '2020-01-19 10:23:31', null, null, null);
+<<<<<<< HEAD
 INSERT INTO `file_record` VALUES ('8a80808d7019d02e01701d4ea5530000', '8a80808d7019d02e01701d577c6e0002', 'filedec24a2c-2fab-4335-b537-3cdd6dc1d084.', 'image/jpeg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\filedec24a2c-2fab-4335-b537-3cdd6dc1d084.', null, null, '2020-02-07 09:40:58', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80808d7019d02e01701d5739aa0001', null, 'filea448f69f-f311-415b-9a14-660d171f2e0e.jpg', 'image/jpg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\filea448f69f-f311-415b-9a14-660d171f2e0e.jpg', null, null, '2020-02-07 09:50:21', null, null, null);
 INSERT INTO `file_record` VALUES ('8a80808d7019d02e01701e2311600004', '8a80808d7019d02e01701e235b6f0005', 'filee7c8c97c-fe86-45dc-95c4-2d5f930be8f3.jpg', 'image/jpg', null, 'C:\\tom\\apache-tomcat-7.0.79-pkgd\\webapps\\wechat-file\\filee7c8c97c-fe86-45dc-95c4-2d5f930be8f3.jpg', null, null, '2020-02-07 13:33:00', null, null, null);
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for gx_oa_mobile_role
@@ -755,7 +783,11 @@ CREATE TABLE `gx_sys_function` (
   `main_function_name` varchar(80) DEFAULT NULL COMMENT '主页显示名称',
   `main_order` int(11) DEFAULT NULL COMMENT '主页排序位',
   PRIMARY KEY (`row_id`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=4010 DEFAULT CHARSET=utf8 COMMENT='系统权限菜单表';
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=4009 DEFAULT CHARSET=utf8 COMMENT='系统权限菜单表';
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Records of gx_sys_function
@@ -770,7 +802,11 @@ INSERT INTO `gx_sys_function` VALUES ('3032', '数据字典管理', null, 'dic/d
 INSERT INTO `gx_sys_function` VALUES ('3044', '组织管理', null, 'sysorg/org-list.do', null, null, null, null, null, '1', '2', '2010', null, '3', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('3045', '人员管理', null, 'sysuser/user-manager-page.do', null, null, null, null, null, '1', '3', '2010', null, '3', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('3046', '角色人员组织管理', null, 'roleuserorg/role-list.do', null, null, null, null, null, '1', '1', '2010', null, '3', null, null, null, null, null);
+<<<<<<< HEAD
 INSERT INTO `gx_sys_function` VALUES ('3074', '手机端角色管理', '', 'role/mobile-role-list.do', '', '2016-04-01 15:24:06', '', '2016-04-01 15:24:20', '', '1', '2', '2011', '', '3', null, null, null, null, null);
+=======
+INSERT INTO `gx_sys_function` VALUES ('3074', '手机端角色管理', '', 'role/mobile-role-list.do', '', '2016-04-01 15:24:06', '', '2016-04-01 15:24:20', '', '1', '2', '2011', '', '3', '', '', '', '', null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 INSERT INTO `gx_sys_function` VALUES ('3086', '菜单管理', null, 'menu/sysmenu-list.do', null, null, null, null, null, '1', '1', '2021', null, '3', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('4001', '一周工作安排', null, null, null, null, null, null, null, '1', '1', 'root', null, '1', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('4002', '一周工作安排', null, null, null, null, null, null, null, '1', '1', '4001', null, '2', null, null, null, null, null);
@@ -780,7 +816,10 @@ INSERT INTO `gx_sys_function` VALUES ('4005', '会议室', null, null, null, nul
 INSERT INTO `gx_sys_function` VALUES ('4006', '会议室管理', null, 'meetingRoom/list.do', null, null, null, null, null, '1', '1', '4005', null, '3', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('4007', '一周工作安排查看列表', null, 'weeklyView/list.do', null, null, null, null, null, null, '3', '4002', null, '3', null, null, null, null, null);
 INSERT INTO `gx_sys_function` VALUES ('4008', '一周工作安排添加', null, 'weeklyView/list-old.do', null, null, null, null, null, null, '4', '4002', null, '3', null, null, null, null, null);
+<<<<<<< HEAD
 INSERT INTO `gx_sys_function` VALUES ('4009', '会议通知', null, 'weeklyView/list-inform.do', null, null, null, null, null, null, '5', '4002', null, '3', null, null, null, null, null);
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for gx_sys_org
@@ -812,6 +851,7 @@ CREATE TABLE `gx_sys_org` (
 -- ----------------------------
 -- Records of gx_sys_org
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `gx_sys_org` VALUES ('01', '地铁建设', '地铁建设', null, null, null, null, '2019-05-22 16:51:17', null, '1', '1', '', '', '0', null, null, null, '01', '0');
 INSERT INTO `gx_sys_org` VALUES ('010101', '办公室', '办公室', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '1', '01', null, '2', '', null, '南京地铁1号线北延工程土建施工D1N-Td01标', '01', '0');
 INSERT INTO `gx_sys_org` VALUES ('010102', '计材处', '计划材料处', null, null, '2019-06-24 14:01:09', null, null, null, '1', '2', '01', '业主', '2', null, '010201', null, null, '0');
@@ -833,6 +873,29 @@ INSERT INTO `gx_sys_org` VALUES ('010117', '4号线', '四号线二期工程管�
 INSERT INTO `gx_sys_org` VALUES ('010118', '10号线', '十号线工程管理处', null, null, null, null, null, null, null, '19', '01', null, null, null, null, null, null, null);
 INSERT INTO `gx_sys_org` VALUES ('010119', '领导班子', '建设公司领导班子成员', null, null, null, null, null, null, null, '22', '01', null, null, null, null, null, null, null);
 INSERT INTO `gx_sys_org` VALUES ('010120', '监察室', '监察室', null, null, null, null, null, null, null, '20', '01', null, null, null, null, null, null, null);
+=======
+INSERT INTO `gx_sys_org` VALUES ('01', '南京地铁建设', null, null, null, null, null, '2019-05-22 16:51:17', null, '1', '1', '', '', '0', null, null, null, '01', '0');
+INSERT INTO `gx_sys_org` VALUES ('010101', '办公室', '', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '1', '01', '中铁三局', '2', '', null, '南京地铁1号线北延工程土建施工D1N-Td01标', '01', '0');
+INSERT INTO `gx_sys_org` VALUES ('010102', '计材处', null, null, null, '2019-06-24 14:01:09', null, null, null, '1', '2', '01', '业主', '2', null, '010201', null, null, '0');
+INSERT INTO `gx_sys_org` VALUES ('010103', '合约处', '', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '3', '01', '', '2', '', '010802', '南京地铁1号线北延工程土建施工D1N-TA01标', null, '0');
+INSERT INTO `gx_sys_org` VALUES ('010104', '用地处', null, null, null, null, null, null, null, null, '4', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010105', '总工办', '', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '5', '01', '', '2', '', '010301', '南京地铁1号线北延工程土建施工D1N-TA01标', '01', '0');
+INSERT INTO `gx_sys_org` VALUES ('010106', '质安处', '', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '6', '01', '', '2', '', '010401', '南京地铁1号线北延工程土建施工D1N-TA01标', null, '0');
+INSERT INTO `gx_sys_org` VALUES ('010107', '车站处', null, null, null, null, null, null, null, null, '7', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010108', '车辆处', '', '', '', '2019-04-23 15:20:46', '', '2019-05-06 16:30:56', '', '1', '8', '01', '', '2', '', '010501', '南京地铁1号线北延工程土建施工D1N-TA01标', null, '0');
+INSERT INTO `gx_sys_org` VALUES ('010109', '通号处', null, null, null, null, null, null, null, null, '9', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010110', '财务处', null, null, null, null, null, null, null, null, '10', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010111', '1号线', null, null, null, null, null, null, null, null, '11', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010112', '2号线', null, null, null, null, null, null, null, null, '12', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010113', '5号线', null, null, null, null, null, null, null, null, '13', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010114', '6号线', null, null, null, null, null, null, null, null, '14', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010115', '7号线', null, null, null, null, null, null, null, null, '15', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010116', '宁句线', null, null, null, null, null, null, null, null, '16', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010117', '4号线', null, null, null, null, null, null, null, null, '17', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010118', '10号线', null, null, null, null, null, null, null, null, '19', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010119', '领导班子', null, null, null, null, null, null, null, null, '22', '01', null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_org` VALUES ('010120', '监察室', null, null, null, null, null, null, null, null, '20', '01', null, null, null, null, null, null, null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for gx_sys_org_role_has_user
@@ -911,7 +974,10 @@ CREATE TABLE `gx_sys_role_has_function` (
 INSERT INTO `gx_sys_role_has_function` VALUES ('297eb8df6fa717a4016fa719ca7a0000', '4008', 'sys-manager-role', null, null, null, null, null);
 INSERT INTO `gx_sys_role_has_function` VALUES ('4', '3019', 'sys-manager-role', null, null, null, null, null);
 INSERT INTO `gx_sys_role_has_function` VALUES ('40289fd36fa1bb41016fa1c28ada0000', '3046', 'sys-manager-role', null, null, null, null, null);
+<<<<<<< HEAD
 INSERT INTO `gx_sys_role_has_function` VALUES ('5', '4009', 'sys-manager-role', null, null, null, null, null);
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 INSERT INTO `gx_sys_role_has_function` VALUES ('8a80800a6f3c1aab016f3c383f340000', '4001', 'basic-role', null, null, null, null, null);
 INSERT INTO `gx_sys_role_has_function` VALUES ('8a80800a6f3c1aab016f3c383f700001', '4002', 'basic-role', null, null, null, null, null);
 INSERT INTO `gx_sys_role_has_function` VALUES ('8a80800a6fa7d50f016fa7f69cbe0016', '4007', 'basic-role', null, null, null, null, null);
@@ -962,7 +1028,13 @@ INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f648ec000f', '
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f649180010', 'yu_l', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f6493f0011', 'li_q', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f6496d0012', 'jin_m', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
+<<<<<<< HEAD
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f649c90014', 'wang_wj', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
+=======
+INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f6499c0013', 'ji_j', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
+INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f649c90014', 'wang_wj', 'basic-role', '2020-01-15 14:48:53', null, null, null, '0');
+INSERT INTO `gx_sys_role_has_user` VALUES ('8a80800a6fa7d50f016fa7f660b60015', 'admin', 'basic-role', '2020-01-15 14:48:59', null, null, null, '0');
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80808d6f642238016f6468b9e60003', 'song_z1', 'basic-role', '2020-01-02 11:59:43', null, null, null, '0');
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80808d6f642238016f6468ba050004', 'liao_h', 'basic-role', '2020-01-02 11:59:43', null, null, null, '0');
 INSERT INTO `gx_sys_role_has_user` VALUES ('8a80808d6f642238016f6468ba150005', 'zhang_xh', 'basic-role', '2020-01-02 11:59:43', null, null, null, '0');
@@ -1015,6 +1087,7 @@ CREATE TABLE `gx_sys_user` (
 -- ----------------------------
 -- Records of gx_sys_user
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `gx_sys_user` VALUES ('4028b285702dec3b01702eb2a3fd0003', null, null, '123', 'look', '2020-02-10 18:43:44', null, null, null, null, null, null, '男', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', '玄武之畔', 'Jiangsu', 'oqCt55Fh6MhGzZk1jqVUSr_MCSMQ', 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLawNaIZrBnqDAKyDhibQZS4s2cDEVGxucAWkzZmmnEL2zR1Q0VgM936htDd89xlPNogJP4JX8jiaDw/132', null);
 INSERT INTO `gx_sys_user` VALUES ('4028b285702dec3b01702ecc70720004', null, null, '123', 'look', '2020-02-10 19:11:55', null, null, null, null, null, null, '男', null, null, null, null, null, null, null, null, 'China', 'Dongguan', 'zh_CN', 'Frankie ', 'Guangdong', 'oqCt55DhFa54KzaY0ryTEgK3g4Nk', 'https://wx.qlogo.cn/mmopen/vi_32/7KgdDKojewMU6WdqcNQx9bINBdue7L4GCNLSJjzibNUIWcmRoKr7ticQd1v5iaiaJtZISWGcqkbPBSBk0Vzt2ia88jA/132', null);
 INSERT INTO `gx_sys_user` VALUES ('4028b285702dec3b01702ed107740005', '', '123', '123', 'xu_hy', '2020-02-10 19:16:56', null, null, null, null, null, null, '男', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', '徐海洋', 'Jiangsu', 'oqCt55MNlEsGzpaysjBhQmUATM7w', 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJIF5VgnZbXGn4HIaoz77ibtpulNncImAv4m5NbjPicMAXcq73v6gVv2pEuLMIzAYXYytlO4cnAibiaaw/132', null);
@@ -1147,6 +1220,19 @@ INSERT INTO `gx_sys_user` VALUES ('8a80808d6fb25ea1016fb2931add0000', null, null
 INSERT INTO `gx_sys_user` VALUES ('8a80808d6fb2b710016fb2c84ca40002', '管理员2', null, null, 'admin2', '2020-01-17 17:14:29', null, null, null, null, null, null, '女', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', '雨晨', 'Jiangsu', 'oqCt55LCMbbAun35qQUpMkfJLw04', 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJBw3QsIfF3XLeJF38R9KBTkpjU2VSYrMJWVDTicibIic6iby6bZDz7m7uS7Y4PP10B4rlczzFxq5JU7A/132', null);
 INSERT INTO `gx_sys_user` VALUES ('8a80808d701e9659017029a40bc20000', '宋洲洋', null, '123', 'song_zy', '2020-02-09 19:09:42', null, null, null, null, null, null, '男', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', '擎天柱', 'Jiangsu', 'oqCt55DqTFpCfq0VsMQde69vxRk0', 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83epR8GNic9vdmpdlIZ3H68obX2K4MBBJ5A8tv7NPBg8BpyWmUhzYgkYu3XKBSLcfsKVn9YmSm6LzjRA/132', null);
 INSERT INTO `gx_sys_user` VALUES ('902809816ad824a3016ad8267ce10004', 'admin', '11bb', '1232123', 'admin', '2019-05-21 10:09:22', null, '2019-04-23 17:16:42', null, null, '9', '1', '1', 'admin', null, null, '1', null, '1', null, '3f2e1978d4bca2c7084f3930cfb0d1f4', null, null, null, null, null, null, null, null);
+=======
+INSERT INTO `gx_sys_user` VALUES ('1', '陈志宁', '123', '123', 'chen_zl', null, null, null, null, null, '1', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('2', '王长宁', '123', '123', 'wang_cn', null, null, null, null, null, '2', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('3', '王霆', '123', '123', 'wang_t', null, null, null, null, null, '3', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('4', '裴顺鑫', '123', '123', 'pei_sx', null, null, null, null, null, '4', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('5', '李慧', '123', '123', 'li_h', null, null, null, null, null, '5', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('6', '郁犁', '123', '123', 'yu_l', null, null, null, null, null, '6', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('7', '黎庆', '123', '123', 'li_q', null, null, null, null, null, '7', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('8', '金明', '123', '123', 'jin_m', null, null, null, null, null, '8', null, null, null, null, null, '100', null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `gx_sys_user` VALUES ('8a80808d6fb25ea1016fb2931add0000', '管理员', null, null, 'admin1', '2020-01-17 16:16:23', null, null, null, null, null, null, '男', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', 'J', 'Jiangsu', 'oqCt55H3p8W04nyK2Z_jkFYfm-uk', 'https://wx.qlogo.cn/mmopen/vi_32/luGOSzjhPgmIudYTXRJz7NmeSkKQBCBwohqIiayEJsd0Pib2s27p3VRqZsMu76byRl4HOClvDwZknWxpjXozKsAg/132', null);
+INSERT INTO `gx_sys_user` VALUES ('8a80808d6fb2b710016fb2c84ca40002', '管理员2', null, null, 'admin2', '2020-01-17 17:14:29', null, null, null, null, null, null, '女', null, null, null, null, null, null, null, null, 'China', 'Nanjing', 'zh_CN', '雨晨', 'Jiangsu', 'oqCt55LCMbbAun35qQUpMkfJLw04', 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJBw3QsIfF3XLeJF38R9KBTkpjU2VSYrMJWVDTicibIic6iby6bZDz7m7uS7Y4PP10B4rlczzFxq5JU7A/132', null);
+INSERT INTO `gx_sys_user` VALUES ('902809816ad824a3016ad8267ce10004', 'admin', '11bb', '1232123', 'admin', '2019-05-21 10:09:22', null, '2019-04-23 17:16:42', null, null, '9', '1', '1', '', null, null, '1', null, '1', null, '3f2e1978d4bca2c7084f3930cfb0d1f4', null, null, null, null, null, null, null, null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for gx_sys_user_in_org
@@ -1346,7 +1432,11 @@ INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6c2c6350016c2c690d2a000d', 'sh
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6c459af7016c461d5c45001f', 'zan_he', '01030120', '2019-07-31 11:40:25', 'chen_w', null, '24110021', null);
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6c459af7016c461dcc9a0023', 'zan_ww', '01030120', '2019-07-31 11:40:54', 'chen_w', null, '24110022', null);
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6c459af7016c461e54590027', 'feng_cj', '01030120', '2019-07-31 11:41:28', 'chen_w', null, '24110023', null);
+<<<<<<< HEAD
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6fa7d50f016fa7e6b8140001', 'chen_zn', '010101', '2020-01-15 14:31:53', 'admin', null, '10', null);
+=======
+INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6fa7d50f016fa7e6b8140001', 'chen_zl', '010101', '2020-01-15 14:31:53', 'admin', null, '10', null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6fa7d50f016fa7e6b8b20002', 'wang_cn', '010101', '2020-01-15 14:31:53', 'admin', null, '11', null);
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6fa7d50f016fa7e6b92a0003', 'wang_t', '010101', '2020-01-15 14:31:53', 'admin', null, '12', null);
 INSERT INTO `gx_sys_user_in_org` VALUES ('8a80800a6fa7d50f016fa7e6b9c70004', 'pei_sx', '010101', '2020-01-15 14:31:53', 'admin', null, '13', null);
@@ -1759,6 +1849,7 @@ CREATE TABLE `gx_sys_user_org_role` (
 -- ----------------------------
 -- Records of gx_sys_user_org_role
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21315016fa213bea90000', '裴顺鑫', 'pei_sx', '', '2020-01-14 11:23:21', null, '4', '0', '裴顺鑫', null, null, null);
 INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21895120001', '金明', 'jin_m', '', '2020-01-14 11:28:38', null, '8', '0', '金明', null, null, null);
 INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa2190dc00002', '王霆', 'wang_t', '', '2020-01-14 11:29:08', null, '3', '0', '王霆', null, null, null);
@@ -1787,6 +1878,36 @@ INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf81e9f0008', '
 INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf82ba90009', '10号线', '010118', '', '2020-01-19 16:42:58', null, '38', '1', '十号线工程管理处', null, null, null);
 INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf91337000a', '领导班子', '010119', '', '2020-01-19 16:43:58', null, '39', '1', '建设公司领导班子成员', null, null, null);
 INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf9257c000b', '监察室', '010120', '', '2020-01-19 16:44:02', null, '40', '1', '监察室', null, null, null);
+=======
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21315016fa213bea90000', '裴顺鑫', 'pei_sx', '', '2020-01-14 11:23:21', null, '4', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21895120001', '金明', 'jin_m', '', '2020-01-14 11:28:38', null, '8', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa2190dc00002', '王霆', 'wang_t', '', '2020-01-14 11:29:08', null, '3', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21992310003', '陈志宁', 'chen_zn', '', '2020-01-14 11:29:42', null, '1', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa219c0030004', '王长宁', 'wang_cn', '', '2020-01-14 11:29:54', null, '2', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21b28980005', '李慧', 'li_h', '', '2020-01-14 11:31:26', null, '5', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21b59fd0006', '郁犁', 'yu_l', '', '2020-01-14 11:31:39', null, '6', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21b87840007', '黎庆', 'li_q', '', '2020-01-14 11:31:51', null, '7', '0', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21c13570008', '办公室', '010101', '', '2020-01-14 11:32:26', null, '21', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21c42090009', '计材处', '010102', '', '2020-01-14 11:32:38', null, '22', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21c6f27000a', '合约处', '010103', '', '2020-01-14 11:32:50', null, '23', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21d5e0f000c', '用地处', '010104', '', '2020-01-14 11:33:51', null, '24', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21d9e24000d', '总工办', '010105', '', '2020-01-14 11:34:08', null, '25', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21dfff3000e', '质安处', '010106', '', '2020-01-14 11:34:33', null, '26', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21e4076000f', '车站处', '010107', '', '2020-01-14 11:34:49', null, '27', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21e75cf0010', '车辆处', '010108', '', '2020-01-14 11:35:03', null, '28', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21ea42a0011', '通号处', '010109', '', '2020-01-14 11:35:15', null, '29', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('2c948a826fa21531016fa21eddc80012', '财务处', '010110', '', '2020-01-14 11:35:29', null, '30', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf7532d0002', '1号线', '010111', '', '2020-01-19 16:42:03', null, '31', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf785550003', '2号线', '010112', '', '2020-01-19 16:42:16', null, '32', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf7dd350004', '5号线', '010113', '', '2020-01-19 16:42:38', null, '33', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf7f4fb0005', '6号线', '10114', '', '2020-01-19 16:42:44', null, '34', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf802450006', '7号线', '010115', '', '2020-01-19 16:42:48', null, '35', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf810bd0007', '宁句线', '010116', '', '2020-01-19 16:42:51', null, '36', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf81e9f0008', '4号线', '010117', '', '2020-01-19 16:42:55', null, '37', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf82ba90009', '10号线', '010118', '', '2020-01-19 16:42:58', null, '38', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf91337000a', '领导班子', '010119', '', '2020-01-19 16:43:58', null, '39', '1', null, null, null, null);
+INSERT INTO `gx_sys_user_org_role` VALUES ('8a80800a6fbcc689016fbcf9257c000b', '监察室', '010120', '', '2020-01-19 16:44:02', null, '40', '1', null, null, null, null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for meeting_arrangement
@@ -1820,16 +1941,22 @@ CREATE TABLE `meeting_arrangement` (
   `day_of_week` varchar(255) DEFAULT NULL COMMENT '星期几',
   `week` varchar(255) DEFAULT NULL COMMENT '第几周',
   `ext` date DEFAULT NULL,
+<<<<<<< HEAD
   `ext2` varchar(255) NOT NULL COMMENT '1显示通过审核 非1微信显示 2/未通过审核',
   `ext3` varchar(255) DEFAULT NULL COMMENT 'open_id',
   `auditor_name` varchar(255) DEFAULT NULL COMMENT '审核人',
   `auditor_id` varchar(255) DEFAULT NULL COMMENT '审核人',
+=======
+  `ext2` varchar(255) DEFAULT NULL COMMENT '1显示 非1微信显示',
+  `ext3` varchar(255) DEFAULT NULL COMMENT 'open_id',
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
   PRIMARY KEY (`row_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of meeting_arrangement
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `meeting_arrangement` VALUES ('402881eb7051ac9f017051b642c50013', '到省自然资源厅沟通用地报批工作', '2020-02-17 13:54:22', null, '2020-01-13 09:00:00', '2020-01-13 12:00:00', null, '省自然资源厅', null, null, '建设用地管理处', null, null, null, '王长宁', null, '建设用地管理处、市规划资源局', null, null, 'admin', null, null, null, '2020', '星期一', '3', null, '1', null, null, null);
 INSERT INTO `meeting_arrangement` VALUES ('402881eb7051ac9f017051b655770014', '集团领导一周工作例会', '2020-02-17 13:54:28', null, '2020-01-13 10:30:00', '2020-01-13 12:00:00', null, '2408室', null, null, '集团办公室', null, null, null, '佘才高', null, '集团领导、办公室', null, null, 'admin', null, null, null, '2020', '星期一', '3', null, '1', null, null, null);
 INSERT INTO `meeting_arrangement` VALUES ('402881eb7051ac9f017051b662b70015', '董事长专题会（听取宁句线麒麟镇、白水桥东、马群站周报区域一体化开发设计方案汇报）', '2020-02-17 13:54:32', null, '2020-01-14 09:00:00', '2020-01-14 12:00:00', null, '2408室', null, null, '宁句公司', null, null, null, '佘才高', null, '于百勇、葛宁、许巧祥、王霆，建设公司（总工程师办公室、宁句线工程管理处）、资源公司、宁句公司', null, null, 'admin', null, null, null, '2020', '星期二', '3', null, '1', null, null, null);
@@ -1861,6 +1988,12 @@ INSERT INTO `meeting_arrangement` VALUES ('4028b285704ec900017052545b17002f', '�
 INSERT INTO `meeting_arrangement` VALUES ('4028b285704ec9000170525468550030', '研究年度计划分解落实工作', '2020-02-17 16:47:08', null, '2020-02-20 14:30:00', '2020-02-20 18:00:00', null, '4A会议室', null, null, '计划材料处', null, null, null, '李慧', null, '计划材料处、相关处室', null, null, 'admin', null, null, null, '2020', '星期四', '8', null, '1', null, null, null);
 INSERT INTO `meeting_arrangement` VALUES ('4028b285704ec900017052547a470031', '2号线西延八标施工单位碰头会', '2020-02-17 16:47:13', null, '2020-02-21 09:00:00', '2020-02-21 12:00:00', null, '现场', null, null, '二号线西延工程管理处', null, null, null, '黎庆', null, '二号线西延工程管理处', null, null, 'admin', null, null, null, '2020', '星期五', '8', null, '1', null, null, null);
 INSERT INTO `meeting_arrangement` VALUES ('4028b285704ec9000170525481c90032', '研究用地处近期工作计划', '2020-02-17 16:47:15', null, '2020-02-21 09:30:00', '2020-02-21 12:00:00', null, '208会议室', null, null, '建设用地管理处', null, null, null, '王长宁', null, '建设用地管理处全体人员', null, null, 'admin', null, null, null, '2020', '星期五', '8', null, '1', null, null, null);
+=======
+INSERT INTO `meeting_arrangement` VALUES ('8a80800a6fad9991016fada37e230001', '到省自然资源厅沟通用地报批工作', null, null, '2020-01-13 09:00:00', '2020-01-13 11:30:00', null, '省自然资源厅', null, null, '建设用地管理处', null, null, null, '王长宁', null, '建设用地管理处,市规划资源局,管理员', null, null, null, null, null, null, '2020', '星期一', '3', null, '1', null);
+INSERT INTO `meeting_arrangement` VALUES ('8a80800a6fad9991016fada508fe0003', '集团领导一周工作例会', null, null, '2020-01-13 10:30:00', '2020-01-13 11:30:00', null, '2408室', null, null, '集团办公室', null, null, null, '佘才高', null, '集团领导,办公室,管理员', null, null, null, null, null, null, '2020', '星期一', '3', null, '1', null);
+INSERT INTO `meeting_arrangement` VALUES ('8a80800a6fad9991016fadade9080006', '安全生产节前检查', null, null, '2020-01-14 09:00:00', '2020-01-17 17:30:00', null, '现场', null, null, '质量安全处', null, null, null, '郁犁', null, '详见通知,管理员', null, null, null, null, null, null, '2020', '星期二', '3', null, '1', null);
+INSERT INTO `meeting_arrangement` VALUES ('8a80800a6fad9991016fadafff540009', '10号线二期概算拆分研究', null, null, '2020-01-14 10:30:00', '2020-01-15 11:30:00', null, '4B会议室', null, null, '合约预算处', null, null, null, '金明', null, '合约预算处,省交咨询公司,管理员', null, null, null, null, null, null, '2020', '星期二', '3', null, '1', null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- Table structure for meetroom_use
@@ -1893,6 +2026,7 @@ CREATE TABLE `meetroom_use` (
 -- ----------------------------
 -- Records of meetroom_use
 -- ----------------------------
+<<<<<<< HEAD
 INSERT INTO `meetroom_use` VALUES ('402881e8701dad9901701db2d58d0000', '8a80800a6f555b96016f555c805b0005', null, 'qq', null, null, null, null, '1', null, null, '1', null, null, null, null, null, null, null, null);
 INSERT INTO `meetroom_use` VALUES ('402881eb70522d330170522f7de00000', '8a80800a6f555b96016f555c807e0007', null, '所街409室', '0', null, null, null, null, null, null, '1', null, null, null, null, null, null, null, null);
 INSERT INTO `meetroom_use` VALUES ('402881eb70522d330170522f7f800001', '8a80800a6f555b96016f555c807e0007', null, '208会议室', null, '0', null, '0', '0', null, null, '1', null, null, null, null, null, null, null, null);
@@ -1908,6 +2042,23 @@ INSERT INTO `meetroom_use` VALUES ('4028b285704ec900017050e866ea0005', '8a80800a
 INSERT INTO `meetroom_use` VALUES ('4028b285704ec9000170524f4332001c', '8a80800a6f555b96016f555c807e0007', null, '4A会议室', null, null, null, '0', null, null, null, null, '1', null, null, null, null, null, null, null);
 INSERT INTO `meetroom_use` VALUES ('4028b285704ec9000170524f44b8001d', '8a80800a6f555b96016f555c807e0007', null, '208会议室', null, null, null, '0', null, null, null, null, '1', null, null, null, null, null, null, null);
 INSERT INTO `meetroom_use` VALUES ('8a80808d7019d02e01701d577d1a0003', '8a80800a6f555b96016f555c805b0005', null, '4楼B', null, null, null, null, '1', null, null, '1', null, null, null, null, null, null, null, null);
+=======
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fada37df20000', '8a80800a6f555b96016f555c80140002', null, '省自然资源厅', '1', null, null, null, null, null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fada508ee0002', '8a80800a6f555b96016f555c80140002', null, '2408室', '0', null, null, null, null, null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fadade7b00004', '8a80800a6f555b96016f555c80140002', null, '现场', null, '1', '1', '1', '1', null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fadade7d80005', '8a80800a6f555b96016f555c80140002', null, '现场', null, '1', '1', '1', '1', null, null, null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fadaffeea0007', '8a80800a6f555b96016f555c80140002', null, '4B会议室', null, '1', '1', null, null, null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fad9991016fadafff0f0008', '8a80800a6f555b96016f555c80140002', null, '4B会议室', null, '1', null, null, null, null, null, null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb1323d016fb132b2210000', '8a80800a6f555b96016f555c80140002', null, '1', null, null, null, null, '0', null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb1323d016fb13514d90002', '8a80800a6f555b96016f555c80140002', null, '4楼会议室A', null, null, null, null, '0', null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb1323d016fb1356a060004', '8a80800a6f555b96016f555c80140002', null, '4楼会议室B', null, null, null, null, '0', null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb14f70016fb15437ad0000', '8a80800a6f555b96016f555c80140002', null, '4楼会议室A', null, null, null, null, '0', null, null, null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb24e80016fb25995dc0000', '8a80800a6f555b96016f555c80140002', null, '2408室111', '0', null, null, null, null, null, null, '1', null, null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80800a6fb261df016fb267e47d0000', '8a80800a6f555b96016f555c80140002', null, '1', null, null, null, null, '0', null, '0', null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80808d6fad9a36016fada0897c0004', '8a80800a6f414f65016f414fe1a80002', null, '所街208室', '1', null, null, null, null, null, null, null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80808d6fb1812e016fb2347c500000', '8a80800a6f555b96016f555c80140002', null, '4楼会议室B', null, '0', null, null, null, null, null, null, '1', null, null, null, null, null, null, null);
+INSERT INTO `meetroom_use` VALUES ('8a80808d6fb1812e016fb235376b0002', '8a80800a6f555b96016f555c80140002', null, '4楼会议室B明', null, '0', null, null, null, null, null, null, '1', null, null, null, null, null, null, null);
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 
 -- ----------------------------
 -- View structure for v_org_role_user
@@ -1999,10 +2150,16 @@ WHERE
 -- View structure for v_user
 -- ----------------------------
 DROP VIEW IF EXISTS `v_user`;
+<<<<<<< HEAD
 CREATE ALGORITHM=UNDEFINED DEFINER=`njdtweb`@`%` SQL SECURITY DEFINER  VIEW `v_user` AS SELECT
 	concat(`o`.`row_id`, `u`.`user_id`) AS `v_user_key`,
 	`o`.`org_name` AS `org_name`,
 	`o`.`org_show_name` AS `org_show_name`,
+=======
+CREATE ALGORITHM=UNDEFINED DEFINER=`njdtweb`@`%`  VIEW `v_user` AS SELECT
+	concat(`o`.`row_id`, `u`.`user_id`) AS `v_user_key`,
+	`o`.`org_name` AS `org_name`,
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 	`o`.`parent_org_id` AS `p_org_id`,
 	`o`.`parent_org_name` AS `p_org_name`,
 	`o`.`org_type` AS `org_type`,
@@ -2010,7 +2167,10 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`njdtweb`@`%` SQL SECURITY DEFINER  VIEW `v_u
 	`u`.`user_name` AS `user_name`,
 	`u`.`user_en_name` AS `user_password`,
 	`u`.`user_id` AS `user_id`,
+<<<<<<< HEAD
 	`u`.`user_level` AS `user_level`,
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 	`u`.`user_type` AS `user_type`,
 	`u`.`user_mobile_num` AS `user_mobile_num`,
 	`u`.`data_status` AS `user_status`,
@@ -2052,17 +2212,24 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`njdtweb`@`%` SQL SECURITY DEFINER  VIEW `w_v
 	meeting_arrangement.apply_date,
 	meeting_arrangement.call_leader_name,
 	meeting_arrangement.call_orgs_name,
+<<<<<<< HEAD
 	meeting_arrangement.use_org_name,
+=======
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 	meeting_arrangement.end_time,
 	file_record.file_name,
 	meeting_arrangement.meeting_room_name,
 	meeting_arrangement.call_users_name,
+<<<<<<< HEAD
 	meeting_arrangement.title,
 	meeting_arrangement.`week`,
 	meeting_arrangement.`year`,
 	meeting_arrangement.ext2,
 	meeting_arrangement.auditor_name,
 	meeting_arrangement.auditor_id
+=======
+	meeting_arrangement.title
+>>>>>>> 2a2d5bb2ce058002835258f23907aa3d6aabac26
 FROM
 	meeting_arrangement
 LEFT JOIN file_record ON meeting_arrangement.row_id = file_record.arrangement_id ;
